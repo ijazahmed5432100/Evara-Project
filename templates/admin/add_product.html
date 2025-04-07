@@ -1,0 +1,368 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Add Product</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="shortcut icon" href="{% static 'adminuser/images/favicon.png' %}">
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            margin-top: 12px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        select.form-control {
+            background-color: #3a3f45;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+
+        select.form-control:focus {
+            border-color: #3699ff;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .image-preview-container {
+            display: inline-block;
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview-container .remove-image-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+            line-height: 22px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .cropper-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1050;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cropper-container {
+            background: #2d3035;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 500px;
+            max-width: 90%;
+        }
+
+        .cropper-content {
+            max-height: 400px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .cropper-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cropper-actions .btn {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 991px) {
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Add New Product</h4>
+                                    <form id="createProductForm" method="POST" enctype="multipart/form-data"
+                                        action="{% url 'create_product' %}" onsubmit="return validateForm()">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="name">Product Name</label>
+                                            <input type="text" class="form-control {% if 'Product name is required' in errors %}is-invalid{% endif %}" id="name" name="product_name"
+                                                required value="{{ form_data.product_name }}">
+                                            {% if 'Product name is required' in errors %}
+                                                <div class="error-message">Product name is required.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea class="form-control {% if 'Description is required' in errors %}is-invalid{% endif %}" id="description" name="description" rows="4"
+                                                required>{{ form_data.description }}</textarea>
+                                            {% if 'Description is required' in errors %}
+                                                <div class="error-message">Description is required.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="category">Category</label>
+                                            <select class="form-control {% if 'Category is required' in errors %}is-invalid{% endif %}" id="category" name="category" required>
+                                                <option value="" disabled {% if not form_data.category %}selected{% endif %}>Select Category</option>
+                                                {% for category in categories %}
+                                                <option value="{{ category.id }}" {% if form_data.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                                    {{ category.category_name }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            {% if 'Category is required' in errors %}
+                                                <div class="error-message">Category is required.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Price</label>
+                                            <input type="number" class="form-control {% if 'Price must be greater than zero.' in errors %}is-invalid{% endif %}" id="price" name="price" step="0.01"
+                                                min="0" required value="{{ form_data.price }}">
+                                            {% if 'Price must be greater than zero.' in errors %}
+                                                <div class="error-message">Price must be greater than zero.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Product Images</label>
+                                            <div class="image-upload-container d-flex align-items-center">
+                                                <input type="file" class="hidden" id="imageInput" accept="image/*">
+                                                <button type="button" class="btn btn-primary" id="addImageBtn">Add Image</button>
+                                            </div>
+                                            <div id="imagePreviews" class="d-flex flex-wrap mt-3" style="gap: 15px;">
+                                                {% for img in form_data.product_images %}
+                                                    <div class="image-preview-container">
+                                                        <img src="{{ img }}" alt="Image Preview">
+                                                        <button type="button" class="remove-image-btn">×</button>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            {% if 'Please upload at least one image.' in errors %}
+                                                <div class="error-message">Please upload at least one image.</div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-primary me-2">Create Product</button>
+                                            <a href="{% url 'product_management' %}" class="btn btn-secondary">Cancel</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cropperModal" class="cropper-modal">
+        <div class="cropper-container">
+            <div class="cropper-content">
+                <img id="cropperImage" src="" alt="Image to crop">
+            </div>
+            <div class="cropper-actions">
+                <button class="btn btn-primary" id="saveCrop">Save Crop</button>
+                <button class="btn btn-secondary" id="cancelCrop">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const imageInput = document.getElementById("imageInput");
+            const addImageBtn = document.getElementById("addImageBtn");
+            const imagePreviews = document.getElementById("imagePreviews");
+            const cropperModal = document.getElementById("cropperModal");
+            const cropperImage = document.getElementById("cropperImage");
+            let cropper = null;
+            let currentImageContainer = null;
+
+            addImageBtn.addEventListener("click", function () {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener("change", function () {
+                const file = imageInput.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith("image/")) {
+                    Swal.fire("Invalid File", "Please select an image file.", "error");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    openCropper(e.target.result);
+                };
+                reader.readAsDataURL(file);
+                imageInput.value = "";
+            });
+
+            function openCropper(imageUrl) {
+                cropperModal.style.display = "flex";
+                cropperImage.src = imageUrl;
+
+                if (cropper) cropper.destroy();
+
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                    zoomable: true,
+                    scalable: true,
+                    responsive: true,
+                });
+            }
+
+            document.getElementById("saveCrop").addEventListener("click", function () {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 800,
+                        height: 800,
+                        imageSmoothingEnabled: true,
+                        imageSmoothingQuality: "high",
+                    });
+
+                    const croppedImage = canvas.toDataURL("image/jpeg");
+                    addImagePreview(croppedImage);
+                    closeCropper();
+                }
+            });
+
+            document.getElementById("cancelCrop").addEventListener("click", closeCropper);
+
+            function addImagePreview(src) {
+                const container = document.createElement("div");
+                container.classList.add("image-preview-container");
+
+                const img = document.createElement("img");
+                img.src = src;
+                container.appendChild(img);
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.innerHTML = "&times;";
+                deleteBtn.classList.add("remove-image-btn");
+                deleteBtn.addEventListener("click", () => container.remove());
+                container.appendChild(deleteBtn);
+
+                const hiddenInput = document.createElement("input");
+                hiddenInput.type = "hidden";
+                hiddenInput.name = "product_images[]";
+                hiddenInput.value = src;
+                container.appendChild(hiddenInput);
+
+                imagePreviews.appendChild(container);
+            }
+
+            function closeCropper() {
+                cropperModal.style.display = "none";
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--=============== FLATICON ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+
+
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'adminuser/img/order.png' %}">
+
+    
+    <!--=============== SWIPER CSS ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+      <!-- External CSS (e.g., Bootstrap) -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <title>Ecommerce Website</title>
+  </head>
+  <body>
+    <!--=============== HEADER ===============-->
+    
+    {% include 'header.html' %}
+
+
+
+
+
+
+<style>
+    .checkout-container {
+        padding: 2rem;
+    }
+
+    h2.cart-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .cart-item {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .product-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #6c757d;
+    }
+
+    .offer-price {
+        color: #198754;
+        font-weight: bold;
+    }
+
+    .address-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #f8f9fa;
+    }
+
+    .address-card.selected {
+        border-color: #0d6efd;
+        background-color: #f0f7ff;
+    }
+
+    .payment-option {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .summary-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .coupon-section {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 1rem;
+        background-color: #f8f9fa;
+    }
+
+    .coupon-section .alert {
+        margin-bottom: 0;
+    }
+</style>
+
+
+
+
+<!-- Breadcrumb -->
+<section class="breadcrumb">
+    <ul class="breadcrumb__list flex container">
+      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">Cart</span></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">Checkout</span></li>
+    </ul>
+  </section>
+
+
+
+
+
+<div class="checkout-container">
+    <div class="row g-4">
+        <!-- Left Column - Cart Items -->
+        <div class="col-lg-8">
+            <h2 class="cart-title mb-4">Your Cart</h2>
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <img src="{{ item.product_variant.product.images.first.image.url }}"
+                            alt="{{ item.product_variant.product.name }}" class="product-image">
+                    </div>
+                    <div class="col-md-9">
+                        <h5 class="mb-2">{{ item.product_variant.product.name }}</h5>
+                        <p class="mb-2">
+                            Size: {{ item.product_variant.size }} |
+                            Color: {{ item.product_variant.color }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if item.product_variant.product.has_offer %}
+                                <span class="original-price me-2">₹{{ item.product_variant.product.price|floatformat:2 }}</span>
+                                <span class="offer-price">₹{{ item.product_variant.product.best_offer_price|floatformat:2 }}</span>
+                                {% else %}
+                                <span class="offer-price">₹{{ item.product_variant.product.price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                Quantity: {{ item.quantity }} |
+                                Subtotal: ₹{{ item.subtotal|floatformat:2 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Delivery Address -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Delivery Address</h4>
+                    <button class="btn btn-outline-primary btn-sm" onclick="showChangeAddress()">Change</button>
+                </div>
+                <div class="address-card" id="default-address">
+                    {% if default_address %}
+                    <p class="fw-bold mb-1">{{ default_address.name }}</p>
+                    <p class="mb-1">{{ default_address.address }}</p>
+                    <p class="mb-1">{{ default_address.city }}, {{ default_address.state }}</p>
+                    <p class="mb-1">{{ default_address.country }} - {{ default_address.postcode }}</p>
+                    <p class="mb-1">Phone: {{ default_address.phone }}</p>
+                    {% else %}
+                    <p>No default address found. Please add an address.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Coupon Section -->
+            <div class="mb-4">
+                <h4 class="mb-3">Apply Coupon</h4>
+                <div class="coupon-section">
+                    <form method="post" action="" class="d-flex gap-2 mb-2">
+                        {% csrf_token %}
+                        <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code"
+                            value="{{ entered_coupon_code }}" required>
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                    </form>
+
+                    {% if coupon_discount %}
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="{% url 'remove_coupon' %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                        <span class="text-success">Coupon Applied: {{ request.session.coupon_code }} ₹{{ coupon_discount|floatformat:2 }} off</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Display messages -->
+                    {% if messages %}
+                    <div class="mt-2">
+                        {% for message in messages %}
+                        <div
+                            class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Payment Methods Section -->
+            <div class="mb-4">
+                <h4 class="mb-3">Payment Method</h4>
+                <div class="payment-option">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" value="COD" id="cod">
+                        <label class="form-check-label" for="cod">Cash on Delivery</label>
+                    </div>
+                </div>
+                <div class="payment-option">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" value="razorpay"
+                            id="razorpay">
+                        <!-- <label class="form-check-label" for="razorpay">Online Payment</label> -->
+                    </div>
+                </div>
+                <div class="payment-option">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" value="wallet" id="wallet">
+                        <label class="form-check-label" for="wallet">
+                            <!-- Wallet (Balance: ₹{{ request.user.wallet.balance|floatformat:2 }}) -->
+                        </label>
+                    </div>
+                    <div id="wallet-error" class="text-danger mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="summary-card">
+                <h4 class="mb-3">Order Summary</h4>
+
+                <!-- Total Listed Price -->
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Listed Price</span>
+                    <span>₹{{ total_listed_price|floatformat:2 }}</span>
+                </div>
+
+                <!-- Total Offer Price -->
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Offer Price</span>
+                    <span>₹{{ total_offer_price|floatformat:2 }}</span>
+                </div>
+
+                <!-- Coupon applied -->
+                {% if coupon_discount %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Coupon Discount</span>
+                    <span class="text-success">₹{{ coupon_discount|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Discounted Amount -->
+                <div class="d-flex justify-content-between mb-2">
+                    <span>You Save</span>
+                    <span class="text-success">₹{{ discounted_amount|floatformat:2 }}</span>
+                </div>
+
+                <!-- Delivery Charge -->
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Delivery Charge</span>
+                    {% if delivery_charge %}
+                    <span>₹{{ delivery_charge }}</span>
+                    {% else %}
+                    <span class="text-success">Free</span>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <!-- Grand Total -->
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total Amount</span>
+                    <span>₹{{ grand_total|floatformat:2 }}</span>
+                </div>
+
+                <!-- Place Order Form -->
+                <form method="POST" action="{% url 'place_order' %}" id="place-order-form" class="mt-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="address_id" id="address-id" value="{{ default_address.id|default:'' }}">
+                    <input type="hidden" name="payment_method" id="payment-method-hidden">
+                    <button type="button" onclick="placeOrder()" class="btn btn-primary w-100">Place Order</button>
+                </form>
+                <div id="error-message" class="text-danger mt-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Address Selection Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Delivery Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% for address in addresses %}
+                <div class="address-card mb-3">
+                    <p class="fw-bold mb-1">{{ address.name }}</p>
+                    <p class="mb-1">{{ address.address }}</p>
+                    <p class="mb-1">{{ address.city }}, {{ address.state }}</p>
+                    <p class="mb-1">{{ address.country }} - {{ address.postcode }}</p>
+                    <p class="mb-1">Phone: {{ address.phone }}</p>
+                    <button class="btn btn-primary mt-2" data-address-id="{{ address.id }}"
+                        onclick="selectAddress(this)">
+                        Deliver Here
+                    </button>
+                </div>
+                {% endfor %}
+                <button class="btn btn-outline-primary w-100" onclick="showAddAddressModal()">
+                    + Add New Address
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Address Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-address-form" method="post" action="{% url 'add_address' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" name="city" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control" id="state" name="state" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="postcode" class="form-label">Postcode</label>
+                        <input type="text" class="form-control" id="postcode" name="postcode" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Address</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let selectedAddressId = "{{ default_address.id|default:'' }}";
+    const addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
+    const addAddressModal = new bootstrap.Modal(document.getElementById('addAddressModal'));
+
+    function showChangeAddress() {
+        addressModal.show();
+    }
+
+    function showAddAddressModal() {
+        addressModal.hide();
+        addAddressModal.show();
+    }
+
+    function selectAddress(button) {
+        selectedAddressId = button.getAttribute("data-address-id");
+
+        const addressDetails = button.parentElement.innerHTML;
+        const defaultAddressDiv = document.getElementById('default-address');
+        defaultAddressDiv.innerHTML = addressDetails;
+
+        // Remove the select button from the displayed address
+        const selectButton = defaultAddressDiv.querySelector('button');
+        if (selectButton) {
+            selectButton.remove();
+        }
+
+        document.getElementById('address-id').value = selectedAddressId;
+        addressModal.hide();
+    }
+
+    document.getElementById('add-address-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        try {
+            const response = await fetch("{% url 'add_address' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger';
+                errorDiv.textContent = 'Failed to add address. Please try again.';
+                event.target.prepend(errorDiv);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    function placeOrder() {
+        const paymentMethodElements = document.getElementsByName("payment_method");
+        let paymentMethod;
+
+        for (const element of paymentMethodElements) {
+            if (element.checked) {
+                paymentMethod = element.value;
+                break;
+            }
+        }
+
+        if (!paymentMethod) {
+            document.getElementById("error-message").innerText = "Please select a payment method.";
+            return;
+        }
+
+        if (!selectedAddressId) {
+            document.getElementById("error-message").innerText = "Please select an address.";
+            return;
+        }
+
+        const grandTotal = parseFloat("{{ grand_total }}");
+
+        // Validate COD for orders above ₹1000
+        if (paymentMethod === "COD" && grandTotal > 1000) {
+            document.getElementById("error-message").innerText = "Orders above ₹1000 cannot be placed with Cash on Delivery.";
+            return;
+        }
+
+        // Validate wallet balance
+        if (paymentMethod === "wallet") {
+            const walletBalance = parseFloat("{{ request.user.wallet.balance }}");
+            if (walletBalance < grandTotal) {
+                document.getElementById("wallet-error").innerText = "Insufficient funds in wallet.";
+                return;
+            }
+        }
+
+        document.getElementById('payment-method-hidden').value = paymentMethod;
+
+        if (paymentMethod === "razorpay") {
+            const placeOrderButton = document.querySelector('#place-order-form button');
+            placeOrderButton.disabled = true;
+
+            fetch("", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams(new FormData(document.getElementById('place-order-form')))
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.razorpay_order_id) {
+                        const options = {
+                            key: data.razorpay_merchant_key,
+                            amount: data.razorpay_amount,
+                            currency: data.currency,
+                            name: "URBAN EDGE",
+                            order_id: data.razorpay_order_id,
+                            handler: function (response) {
+                                const djangoOrderId = data.django_order_id;  // From initiate_payment response
+                                fetch("", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/x-www-form-urlencoded",
+                                        "X-CSRFToken": "{{ csrf_token }}"
+                                    },
+                                    body: new URLSearchParams({
+                                        'razorpay_payment_id': response.razorpay_payment_id,
+                                        'razorpay_order_id': response.razorpay_order_id,
+                                        'razorpay_signature': response.razorpay_signature
+                                    })
+                                })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            window.location.href = data.callback_url;
+                                        } else {
+                                            window.location.href = data.callback_url;
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        document.getElementById("error-message").innerText = "Error processing payment.";
+                                    });
+                            },
+                            modal: {
+                                ondismiss: function() {
+                                    // Redirect to payment failure URL when the modal is dismissed
+                                    window.location.href = data.callback_url;
+                                }
+                            },
+                            prefill: {
+                                name: "{{ request.user.username }}",
+                                email: "{{ request.user.email }}",
+                                contact: "9995160852"
+                            },
+                            theme: {
+                                color: "#0d6efd"
+                            },
+                            method: {
+                                netbanking: true,
+                                card: true,
+                                wallet: true,
+                                upi: true
+                            }
+                        };
+                        const rzp1 = new Razorpay(options);
+                        rzp1.open();
+                    } else {
+                        document.getElementById("error-message").innerText = "Error initiating payment 1.";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("error-message").innerText = "Error initiating payment 2.";
+                })
+                .finally(() => {
+                    placeOrderButton.disabled = false;
+                });
+        } else {
+            document.getElementById('place-order-form').submit();
+        }
+    }
+</script>
+
+
+
+
+
+
+<!-- External JS (e.g., Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+
+
+</body>
+
+</html>

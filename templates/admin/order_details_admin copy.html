@@ -1,0 +1,488 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Order Details</title>
+    
+    
+    
+    <!-- Internal CSS for dark theme -->
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            color: #ffffff;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #3699ff;
+            color: #3699ff;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #444;
+        }
+
+        .table tbody tr:hover {
+            background-color: #3a3f45;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        /* Ensure dropdown text is white */
+        select.form-control {
+            color: #ffffff !important;
+        }
+
+        /* Ensure dropdown options are white */
+        select.form-control option {
+            color: #ffffff;
+            background-color: #2d3035;
+            /* Match the dropdown background */
+        }
+
+        /* Ensure selected option is visible */
+        select.form-control:focus option:checked {
+            color: #ffffff;
+            background-color: #3699ff;
+            /* Highlight color for selected option */
+        }
+
+        .alert-container .alert {
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .alert-danger {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+            color: #ffffff;
+        }
+
+        .alert-info {
+            background-color: #03a9f4;
+            color: #ffffff;
+        }
+
+        .modal-content {
+            background-color: #2d3035;
+            color: #ffffff;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #444;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #444;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Add new status badge styles */
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .status-processing {
+            background-color: #ffa726;
+            color: #000000;
+        }
+
+        .status-pending {
+            background-color: #29b6f6;
+            color: #000000;
+        }
+
+        .status-completed {
+            background-color: #66bb6a;
+            color: #000000;
+        }
+
+        .status-canceled {
+            background-color: #ef5350;
+            color: #ffffff;
+        }
+
+        .status-returned {
+            background-color: #8e24aa;
+            color: #ffffff;
+        }
+
+        /* Center the pagination controls */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination .step-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination .step-links .btn {
+            margin: 0 5px;
+        }
+
+        @media (max-width: 991px) {
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <!-- Messages Block -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert alert-dismissible fade show {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Back Button and Order Details -->
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{% url 'order_management' %}" class="btn btn-secondary mb-3">Back to Order
+                                        Management</a>
+                                    <h4 class="card-title">Order Details - {{ order.id }}</h4>
+
+                                     <!-- Order Status Badge -->
+                                     <div class="mb-4">
+                                        <span class="status-badge status-{{ order.status|lower }}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </div>
+
+                                    <!-- New Delivery Address Section -->
+                                    <div class="card mb-4" style="background-color: #2d3035;">
+                                        <div class="card-body">
+                                            <h5 class="card-title" style="color: #ffffff; font-size: 18px; margin-bottom: 15px;">Delivery Address</h5>
+                                            <div style="color: #ffffff;">
+                                                {{ order.shipping_address|linebreaks }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Product</th>
+                                                    <th>Variant</th>
+                                                    <th>Quantity</th>
+                                                    <th>Listed Price</th>
+                                                    <th>Selling Price</th>
+                                                    <th>Status</th>
+                                                    <th>Cancel Reason</th>
+                                                    <th>Return Reason</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for item in order_items %}
+                                                <tr>
+                                                    <td><img src="{{ item.product.images.first.image.url }}"
+                                                            class="product-image" alt="{{ item.product.name }}"></td>
+                                                    <td>{{ item.product.name|truncatechars:30 }}</td>
+                                                    <td>{{ item.product_variant.color }} - {{ item.product_variant.size }}</td>
+                                                    <td>{{ item.quantity }}</td>
+                                                    <td>₹{{ item.product.price|floatformat:2 }}</td>
+                                                    <td>₹{{ item.final_price|floatformat:2 }}</td>
+                                                    <td>{{ item.get_status_display }}</td>
+                                                    <td>
+                                                        {% if item.cancel_reason %}
+                                                        <button type="button" class="btn btn-info btn-sm"
+                                                            data-toggle="modal"
+                                                            data-target="#cancelReasonModal{{ item.id }}">
+                                                            View Reason
+                                                        </button>
+                                                        {% else %}
+                                                        N/A
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if item.return_reason %}
+                                                        <button type="button" class="btn btn-info btn-sm"
+                                                            data-toggle="modal"
+                                                            data-target="#returnReasonModal{{ item.id }}">
+                                                            View Reason
+                                                        </button>
+                                                        {% else %}
+                                                        N/A
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <form class="update-status-form" method="post"
+                                                            action="{% url 'update_order_status' order.id %}"
+                                                            style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                            <select name="status" class="form-control form-control-sm">
+                                                                {% for status in status_choices %}
+                                                                {% if status.0 != 'returned' and status.0 != 'canceled' and status.0 != 'return_requested' %}
+                                                                <option value="{{ status.0 }}"
+                                                                {% if item.status == status.0 %}selected{% endif %}>
+                                                                    {{ status.1 }}
+                                                                </option>
+                                                                {% endif %}
+                                                                {% endfor %}
+                                                            </select>
+                                                            <button type="submit"
+                                                                class="btn btn-primary btn-sm">Update</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- Pagination -->
+                                    <div class="pagination mt-4">
+                                        <span class="step-links">
+                                            {% if order_items.has_previous %}
+                                            <a href="?page={{ order_items.previous_page_number }}"
+                                                class="btn btn-primary">Previous</a>
+                                            {% endif %}
+
+                                            <span class="current">
+                                                Page {{ order_items.number }} of {{ order_items.paginator.num_pages }}
+                                            </span>
+
+                                            {% if order_items.has_next %}
+                                            <a href="?page={{ order_items.next_page_number }}"
+                                                class="btn btn-primary">Next</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modals for Cancel and Return Reasons -->
+                    {% for item in order_items %}
+                    <!-- Cancel Reason Modal -->
+                    <div class="modal fade" id="cancelReasonModal{{ item.id }}" tabindex="-1" role="dialog"
+                        aria-labelledby="cancelReasonModalLabel{{ item.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cancelReasonModalLabel{{ item.id }}">Cancel Reason</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {{ item.cancel_reason }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Return Reason Modal -->
+                    <div class="modal fade" id="returnReasonModal{{ item.id }}" tabindex="-1" role="dialog"
+                        aria-labelledby="returnReasonModalLabel{{ item.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="returnReasonModalLabel{{ item.id }}">Return Reason</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    {{ item.return_reason }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Success/Error Messages -->
+    <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Status Update</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="statusModalBody">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'adminuser/vendors/js/vendor.bundle.base.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusForms = document.querySelectorAll('.update-status-form');
+            statusForms.forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const formData = new FormData(form);
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show success message in modal
+                                document.getElementById('statusModalBody').innerText = data.message;
+                                $('#statusModal').modal('show');
+                                // Redirect after a short delay
+                                setTimeout(() => {
+                                    window.location.href = data.redirect_url;
+                                }, 2000);
+                            } else {
+                                // Show error message in modal
+                                document.getElementById('statusModalBody').innerText = data.error;
+                                $('#statusModal').modal('show');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

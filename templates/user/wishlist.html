@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--=============== FLATICON ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+    />
+
+    <!--=============== SWIPER CSS ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />   
+
+    <title>Ecommerce Website</title>
+  </head>
+  <body>
+    <!--=============== HEADER ===============-->
+    
+    {% include 'header.html' %}
+
+    <!--=============== MAIN ===============-->
+    <main class="main">
+      <!--=============== BREADCRUMB ===============-->
+      <section class="breadcrumb">
+        <ul class="breadcrumb__list flex container">
+          <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+          <li><span class="breadcrumb__link"></span>></li>
+          <li><span class="breadcrumb__link">Shop</span></li>
+          <li><span class="breadcrumb__link"></span>></li>
+          <li><span class="breadcrumb__link">Wishlist</span></li>
+        </ul>
+      </section>
+
+
+
+
+
+
+
+      <div id="notification" class="notification"></div>
+
+<style>
+    .notification {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        display: none;
+    }
+    .success {
+        background-color: #4CAF50;
+    }
+    .error {
+        background-color: #FF5733;
+    }
+
+
+
+
+
+      /* Message Container - Centers messages */
+.message-container {
+  position: fixed;
+  top: 16%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Message Box Styling */
+.alert {
+  background-color: #333;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: center;
+  margin: 10px 0;
+  min-width: 300px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* Success & Error Colors */
+.alert-success { background-color: #28a745; }
+.alert-error { background-color: #dc3545; }
+.alert-warning { background-color: #ffc107; }
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
+
+
+
+</style>
+
+
+
+
+{% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+
+
+
+
+      <!--=============== WISHLIST ===============-->
+      <section class="wishlist section--lg container">
+        <div class="table__container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock Status</th>
+                <th>Action</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in wishlist_items %}
+              <tr id="wishlist-item-{{ item.id }}" >
+                <td>
+                  {% if item.first_image_url %}
+                      <img src="{{ item.first_image_url }}" alt="{{ item.product.name }}" class="table__img" />
+                  {% else %}
+                      <img src="/static/images/default-product.jpg" alt="No Image" class="table__img" />
+                  {% endif %}
+                  
+                </td>
+                <td>
+                  <h3 class="table__title">
+                    {{ item.product.name }}
+                  </h3>
+                  
+                </td>
+                <td>
+                  <span class="table__price">₹{{ item.product.price }}</span>
+                </td>
+                <!-- <td><span class="table__stock">{% if item.product.stock > 0 %}In Stock{% else %}Out of Stock{% endif %} </span></td> -->
+                <td><span class="table__stock">In Stock</span></td>
+                <td> <a href="{% url 'move_to_cart' item.id %}" > <button class="btn btn--sm move-to-cart">Add to Cart</button></td> </a>
+                {% csrf_token %}
+
+                <td><a href="{% url 'remove_from_wishlist' item.id %}" ><i class="fi fi-rs-trash table__trash remove-from-wishlist" data-id="{{ item.id }}" ></i></a></td>
+              </tr>
+              {% empty %}
+                <tr>
+                <td colspan="6">Your wishlist is empty.</td>
+                </tr>
+                
+                {% endfor %}
+            </tbody>
+            
+          </table>
+        </div>
+      </section>
+
+
+
+    
+      <!--=============== SWIPER JS ===============-->
+
+      {% include 'footer.html' %}
+
+     
+
+    <!--=============== SWIPER JS ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!--=============== MAIN JS ===============-->
+    <script src="{% static 'js/main.js' %}"></script>    
+
+
+
+
+
+    <script>
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".remove-from-wishlist").forEach(button => {
+            button.addEventListener("click", function () {
+                const itemId = this.getAttribute("data-id");
+    
+                fetch(`/wishlist/remove/${itemId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": getCSRFToken(),
+                     "Content-Type": "application/json" }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        document.getElementById(`wishlist-item-${itemId}`).remove();
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    
+        document.querySelectorAll(".move-to-cart").forEach(button => {
+            button.addEventListener("click", function () {
+                const itemId = this.getAttribute("data-id");
+    
+                fetch(`/wishlist/move_to_cart/${itemId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": getCSRFToken() }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        document.getElementById(`wishlist-item-${itemId}`).remove();
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    });
+
+
+
+    
+    
+    
+    function getCSRFToken() {
+      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]");
+      return csrfToken ? csrfToken.value : "";
+  }
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  function showNotification(message, type) {
+    let notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.classList.add(type === "success" ? "success" : "error");
+    notification.style.display = "block";
+
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, 3000);
+}
+
+
+
+
+
+
+    
+    
+
+    </script>
+
+
+
+
+
+
+
+  </body>
+</html>

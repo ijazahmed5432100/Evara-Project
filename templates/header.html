@@ -1,0 +1,174 @@
+{% load static %}
+
+
+<!-- CSS -->
+<style>
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .profile-icon {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      min-width: 200px;
+      display: none;
+      z-index: 1000;
+    }
+    
+    .profile-dropdown:hover .dropdown-menu {
+      display: block;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      text-decoration: none;
+      color: #333;
+      transition: background-color 0.2s;
+    }
+    
+    .menu-item:hover {
+      background-color: #f8f8f8;
+    }
+    
+    .menu-item svg {
+      margin-right: 10px;
+    }
+    
+    .profile-item {
+      border-bottom: 1px solid #eee;
+    }
+    
+    .logout-item {
+      color: #333;
+    }
+    
+    .logout-icon {
+      stroke: #ff3333;
+    }
+    
+    .logout-text {
+      color: #ff3333;
+    }
+  </style>
+
+
+
+<header class="header">
+      
+
+    <nav class="nav container">
+      <a href="index.html" class="nav__logo">
+        <img
+          class="nav__logo-img"
+          src="{% static 'assets/img/logo.svg' %}"
+          alt="website logo"
+        />
+      </a>
+      <div class="nav__menu" id="nav-menu">
+        <div class="nav__menu-top">
+          <a href="index.html" class="nav__menu-logo">
+            <img src="{% static 'assets/img/logo.svg' %}" alt="">
+          </a>
+          <div class="nav__close" id="nav-close">
+            <i class="fi fi-rs-cross-small"></i>
+          </div>
+        </div>
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="{% url 'home' %}" class="nav__link active-link">Home</a>
+          </li>
+          <li class="nav__item">
+            <a href="{% url 'all_products' %}" class="nav__link">Shop</a>
+          </li>
+          <li class="nav__item">
+            <a href="accounts.html" class="nav__link">My Account</a>
+          </li>
+          <li class="nav__item">
+            <a href="compare.html" class="nav__link">Contact</a>
+          </li>
+          <li class="nav__item">
+            <a href="login-register.html" class="nav__link">About</a>
+          </li>
+        </ul>
+        <div class="header__search">
+          <input
+            type="text"
+            placeholder="Search For Items..."
+            class="form__input"
+          />
+          <button class="search__btn">
+            <img src="{% static 'assets/img/search.png' %}" alt="search icon" />
+          </button>
+        </div>
+      </div>
+      <div class="header__user-actions">
+        <a href="{% url 'wishlist' %}" class="header__action-btn" title="Wishlist">
+          <img src="{% static 'assets/img/icon-heart.svg' %}" alt="" />
+          <!-- <span class="count">3</span> -->
+        </a>
+        <a href="{% url 'cart_view' %}" class="header__action-btn" title="Cart">
+          <img src="{% static 'assets/img/icon-cart.svg' %}" alt="" />
+          <!-- <span class="count">3</span> -->
+        </a>
+
+
+
+
+
+
+       <!-- Profile Dropdown -->
+       {% if user.is_authenticated %}
+<div class="profile-dropdown">
+<div class="profile-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+</div>
+<div class="dropdown-menu">
+  <a href="{% url 'user_profile' %}" class="menu-item profile-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+    Profile
+  </a>
+  <a href="{% url 'userlogout' %}" class="menu-item logout-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logout-icon">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+      <polyline points="16 17 21 12 16 7"></polyline>
+      <line x1="21" y1="12" x2="9" y2="12"></line>
+    </svg>
+    <span class="logout-text">Logout</span>
+  </a>
+</div>
+</div>
+{% else %}
+<a href="{% url 'login' %}"  class="login-button nav__link">Login</a>
+{% endif %}
+
+
+
+
+
+
+        <div class="header__action-btn nav__toggle" id="nav-toggle">
+          <img src="{% static 'assets/img/menu-burger.svg' %}" alt="">
+        </div>
+      </div>
+    </nav>
+  </header>

@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+
+
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #1a1f36;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d3250' fill-opacity='0.4'%3E%3Cpath d='M0 0h1v1H0zM10 10h1v1h-1zM20 20h1v1h-1zM30 30h1v1h-1zM40 40h1v1h-1zM50 50h1v1h-1zM60 60h1v1h-1zM70 70h1v1h-1zM80 80h1v1h-1zM90 90h1v1h-1z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .login-container {
+            background: #1c1c1c;
+            padding: 32px;
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .title {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            margin: 0 0 24px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .alert {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px;
+            margin-bottom: 16px;
+            border-radius: 3px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            color: #9ba4b4;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: lowercase;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            background: #2b2b2b;
+            border: 1px solid #3a3a3a;
+            border-radius: 3px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #0099ff;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        .login-button:hover {
+            background: #0088ee;
+        }
+
+        .login-button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="title">Admin Login</h1>
+        {% if messages %}
+        <div class="alert">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="username" class="input-label">username</label>
+                <input type="text" id="username" name="username" class="input-field" required value="{{ form_data.username |default:''}}">
+            </div>
+            
+            <div class="input-group">
+                <label for="password" class="input-label">password</label>
+                <input type="password" id="password" name="password" class="input-field" required>
+            </div>
+            
+            <button type="submit" class="login-button">Login</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Product List</title>
+    
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            margin-top: 10px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #ffffffe5;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            color: #ffffff;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #3699ff;
+            color: #3699ff;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #444;
+        }
+
+        .table tbody tr:hover {
+            background-color: #c1d4f1;
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+
+        .btn-outline-danger {
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        .alert-container .alert {
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .alert-danger {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+            color: #ffffff;
+        }
+
+        .alert-info {
+            background-color: #03a9f4;
+            color: #ffffff;
+        }
+
+        /* Center the pagination controls */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination .step-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination .step-links .btn {
+            margin: 0 5px;
+        }
+
+        @media (max-width: 991px) {
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+
+        img {
+            width: 50px;  /* Adjust the size as needed */
+            height: 50px; 
+            object-fit: cover; /* Ensures the image fits well */
+            border-radius: 50%; /* Makes it circular */
+            border: 2px solid #ddd; /* Optional: Adds a border around */
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <!-- Messages Block -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert alert-dismissible fade show {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Search bar -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <form method="GET" action="{% url 'product_management' %}">
+                                <div class="input-group">
+                                    <input type="text" name="q" class="form-control" placeholder="Search products..."
+                                        value="{{ query|default:'' }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Display search results summary -->
+                    {% if query %}
+                    <p class="text-muted">Search results for "{{ query }}": {{ products.paginator.count }} found</p>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Product List</h4>
+                                    <a href="{% url 'create_product' %}" class="btn btn-primary mb-4">+ Add New Product</a>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        <div class="form-check form-check-muted m-0">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input">
+                                                            </label>
+                                                        </div>
+                                                    </th>
+                                                    <th>Id</th>
+                                                    <th>Product Name</th>
+                                                    <th>Category</th>
+                                                    <th>Variants</th>
+                                                    <th>Price</th>
+                                                    <th>Offer</th>
+                                                    <th>Images</th>
+                                                    <th>Add Stock</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if products %}
+                                                {% for product in products %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check form-check-muted m-0">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input">
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ product.id }}</td>
+                                                    <td>{{ product.name|truncatechars:50 }}</td>
+                                                    <td>{{ product.category.category_name }}</td>
+                                                    <td>
+                                                        {% for variant in product.variants.all %}
+                                                        <p>{{ variant.color }} - {{ variant.size }} (Stock: {{ variant.stock }})</p>
+                                                        {% empty %}
+                                                        <p>No variants available</p>
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>₹{{ product.price|floatformat:2 }}</td>
+                                                    <td>
+                                                        {% if product.final_offer_price is not None %}
+                                                        ₹{{ product.final_offer_price|floatformat:2 }}
+                                                        {% else %}
+                                                        No Offer
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% for image in product.images.all %}
+                                                        <img src="{{ image.image.url }}" alt="Product Image"
+                                                            style="width: 70px; height: 70px; margin-right: 5px;">
+                                                        {% empty %}
+                                                        <p>No images available</p>
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'variant' product.id %}"
+                                                            class="btn btn-outline-danger">Add Stock</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'edit_product' product.id %}"
+                                                            class="btn btn-success">Edit</a>
+                                                        <a href="{% url 'list_unlist' product.id %}"
+                                                            class="btn {% if product.is_listed %}btn-outline-primary{% else %}btn-outline-secondary{% endif %}">
+                                                            {% if product.is_listed %}Unlist{% else %}Relist{% endif %}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <tr>
+                                                    <td colspan="10" class="text-center">No products found</td>
+                                                </tr>
+                                                {% endif %}
+                                            </tbody>
+                                            
+                                        </table>
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    <div class="pagination mt-4">
+                                        <span class="step-links">
+                                            {% if products.has_previous %}
+                                                <a href="?page={{ products.previous_page_number }}&q={{ query }}" class="btn btn-primary">Previous</a>
+                                            {% endif %}
+
+                                            <span class="current">
+                                                Page {{ products.number }} of {{ products.paginator.num_pages }}
+                                            </span>
+
+                                            {% if products.has_next %}
+                                                <a href="?page={{ products.next_page_number }}&q={{ query }}" class="btn btn-primary">Next</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'adminuser/vendors/js/vendor.bundle.base.js' %}"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+ 

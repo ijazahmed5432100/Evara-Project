@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Edit Variant</title>
+    <link rel="stylesheet" href="{% static 'adminuser/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="{% static 'adminuser/css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'adminuser/images/favicon.png' %}" />
+    <!-- Internal CSS for dark theme -->
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #1e2227;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        h2 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+        }
+
+        .alert-danger {
+            background-color: #ff4d4d;
+            color: #ffffff;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger ul {
+            margin-bottom: 0;
+        }
+
+        .alert-danger li {
+            list-style-type: none;
+        }
+
+        @media (max-width: 991px) {
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2>Edit Variant</h2>
+                                    {% if errors %}
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="color">Color:</label>
+                                            <input type="text" class="form-control" id="color" name="color"
+                                                value="{{ variant.color }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="size">Size:</label>
+                                            <input type="text" class="form-control" id="size" name="size"
+                                                value="{{ variant.size }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="stock">Stock:</label>
+                                            <input type="number" class="form-control" id="stock" name="stock"
+                                                value="{{ variant.stock }}" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Update Variant</button>
+                                        <a href="{% url 'variant' product_id=variant.product.id %}"
+                                            class="btn btn-secondary">Cancel</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'adminuser/vendors/js/vendor.bundle.base.js' %}"></script>
+</body>
+
+</html>

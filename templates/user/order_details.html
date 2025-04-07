@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--=============== FLATICON ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+
+
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'adminuser/img/order.png' %}">
+
+    
+    <!--=============== SWIPER CSS ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+      <!-- External CSS (e.g., Bootstrap) -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <title>Ecommerce Website</title>
+  </head>
+  <body>
+    <!--=============== HEADER ===============-->
+    
+    {% include 'header.html' %}
+
+
+
+
+
+
+<style>
+    .nav-link {
+        color: #2c3e50;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        text-align: left;
+        width: 100%;
+    }
+    
+    /* Ensure the icon and text are properly aligned */
+    .nav-link i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    /* Make the sidebar container full width within its column */
+    .sidebar {
+        position: sticky;
+        top: 20px;
+        width: 100%;
+    }
+    
+    /* Ensure the flex-column class works properly */
+    .nav.flex-column {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #088178;
+        /* padding-left: 25px; */
+    }
+
+    .nav-link.active {
+        background-color: #edf7f7;
+        color: #088178;
+    }
+
+    .nav-link i {
+        margin-right: 10px;
+    }
+
+    .details-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .order-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .order-id {
+        color: #088178;
+        font-weight: 500;
+    }
+
+    .badge-status {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .price-details {
+        border-top: 1px solid #e9ecef;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .total-row {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #088178;
+        border-top: 2px solid #e9ecef;
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+
+    .back-btn {
+        background-color: #088178;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .cancel-btn {
+        background-color: rgb(197, 16, 16);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .cancel-btn:hover {
+        background-color: darkred;
+        color: white;
+    }
+
+    .return-btn {
+        background-color: rgb(182, 179, 11);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .return-btn:hover {
+        background-color: rgb(153, 151, 7);
+        color: white;
+    }
+
+    .back-btn:hover {
+        background-color: #066c65;
+        color: white;
+    }
+
+    .timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 20px 0;
+        padding: 20px 0;
+    }
+
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        position: relative;
+    }
+
+    .timeline-step.return-step {
+        display: none;
+    }
+
+    .timeline[data-status="return_requested"] .return-step.return-requested,
+    .timeline[data-status="returned"] .return-step.returned,
+    .timeline[data-status="return_denied"] .return-step.return-denied {
+        display: flex;
+    }
+
+    .timeline-step .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .timeline[data-status="processing"] .icon {
+        background-color: transparent;
+        border: 2px solid #e9ecef;
+    }
+
+    .timeline-step.completed .icon,
+    .timeline-step.active .icon {
+        background-color: #088178;
+        color: white;
+    }
+
+    .timeline-step.return-active .icon {
+        background-color: #ffa500;
+        color: white;
+    }
+
+    .timeline-step.return-denied .icon {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .timeline-connector {
+        position: absolute;
+        height: 2px;
+        background-color: #e9ecef;
+        top: 20px;
+        width: calc(100% - 40px);
+        left: calc(50% + 20px);
+        z-index: 1;
+    }
+
+    .timeline-step.completed .timeline-connector,
+    .timeline-step.active .timeline-connector {
+        background-color: #088178;
+    }
+
+    .timeline-step.return-active .timeline-connector {
+        background-color: #ffa500;
+    }
+
+    .timeline-step.return-denied .timeline-connector {
+        background-color: #dc3545;
+    }
+
+    .timeline-step.return-step .timeline-connector {
+        display: none;
+    }
+
+    .timeline-step p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #666;
+        text-align: center;
+    }
+
+    .timeline-step.completed p,
+    .timeline-step.active p {
+        color: #088178;
+    }
+
+    .timeline-step.return-active p {
+        color: #ffa500;
+    }
+
+    .timeline-step.return-denied p {
+        color: #dc3545;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .timeline-step.canceled-status {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .timeline-step.canceled-status .icon {
+        background-color: transparent;
+        border: none;
+        color: #dc3545;
+        font-size: 2rem;
+    }
+
+    .timeline-step.canceled-status p {
+        color: #dc3545;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .status-processing {
+        background-color: cyan;
+    }
+
+    .status-order_placed {
+        background-color: blue;
+    }
+
+    .status-shipped {
+        background-color: purple;
+    }
+
+    .status-out_for_delivery {
+        background-color: orange;
+    }
+
+    .status-delivered {
+        background-color: green;
+    }
+
+    .status-return_requested {
+        background-color: yellow;
+    }
+
+    .status-returned {
+        background-color: gray;
+    }
+
+    .status-return_denied {
+        background-color: red;
+    }
+
+    .status-canceled {
+        background-color: red;
+    }
+
+    .download-invoice-btn {
+        background-color: #088178;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .download-invoice-btn:hover {
+        background-color: #066c65;
+        color: white;
+    }
+
+    @media (max-width: 991px) {
+        .sidebar {
+            position: static;
+            margin-bottom: 30px;
+        }
+
+        .timeline {
+            flex-wrap: wrap;
+        }
+
+        .timeline-step {
+            width: 50%;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+
+
+
+<!-- Breadcrumb -->
+<section class="breadcrumb">
+    <ul class="breadcrumb__list flex container">
+      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">profile</span></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">Orders</span></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">Order Items</span></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">Order Item details</span></li>
+    </ul>
+  </section>
+
+
+
+
+<div class="container my-4">
+    
+
+    <div class="row mt-4">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <div class="bg-white rounded p-4">
+                    <nav class="nav">
+                        <a class="nav-link" href="{% url 'user_profile' %}">
+                            <i class="bi bi-person"></i> My Profile
+                        </a>
+                        <a class="nav-link" href="{% url 'addresses' %}">
+                            <i class="bi bi-geo-alt"></i> My Addresses
+                        </a>
+                        <a class="nav-link active" href="{% url 'user_orders' %}">
+                            <i class="bi bi-box"></i> My Orders
+                        </a>
+                        <!-- <a class="nav-link" href="
+                            <i class="bi bi-wallet"></i> My Wallet
+                        </a>
+                        <a class="nav-link" href="">
+                            <i class="bi bi-ticket-perforated"></i> Coupons
+                        </a> -->
+                        <a class="nav-link logout-link" href="{% url 'userlogout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- 1st Container: Order Summary, Particular Product, Delivery Address, Back Button -->
+            <div class="details-card mb-4">
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-1">Order ID: <span class="order-id">#{{ order.id }}</span></h5>
+                            <p class="mb-0 text-muted">Ordered on {{ order.created_at|date:"d M Y" }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            {% if particular_product.status in 'delivered,return_requested,returned,return_denied' %}
+                            <a href="{% url 'download_invoice' order.id %}" class="download-invoice-btn">
+                                Download Invoice
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline" data-status="{{ particular_product.status }}">
+                    <!-- Canceled Status (Special Case) -->
+                    {% if particular_product.status == 'canceled' %}
+                    <div class="timeline-step canceled-status">
+                        <div class="icon">
+                            <i class="bi bi-x-circle-fill" style="color: #dc3545;"></i>
+                        </div>
+                        <p>Canceled</p>
+                    </div>
+                    {% else %}
+                    <!-- Order Placed -->
+                    <div class="timeline-step 
+                            {% if particular_product.status != 'canceled' and particular_product.status != 'processing' %}
+                                {% if particular_product.status != 'order_placed' %}
+                                    completed
+                                {% else %}
+                                    active
+                                {% endif %}
+                            {% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-cart"></i>
+                        </div>
+                        <p>Order Placed</p>
+                        <div
+                            class="timeline-connector {% if particular_product.status == 'order_placed' or particular_product.status == 'processing' %}hidden{% endif %}">
+                        </div>
+                    </div>
+
+                    <!-- Shipped -->
+                    <div class="timeline-step 
+                            {% if particular_product.status == 'shipped' %}
+                                active
+                            {% elif particular_product.status == 'out_for_delivery' or particular_product.status == 'delivered' or particular_product.status == 'return_requested' or particular_product.status == 'returned' or particular_product.status == 'return_denied' %}
+                                completed
+                            {% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <p>Shipped</p>
+                        <div
+                            class="timeline-connector {% if particular_product.status == 'shipped' or particular_product.status == 'order_placed' or particular_product.status == 'processing' %}hidden{% endif %}">
+                        </div>
+                    </div>
+
+                    <!-- Out for Delivery -->
+                    <div class="timeline-step 
+                            {% if particular_product.status == 'out_for_delivery' %}
+                                active
+                            {% elif particular_product.status == 'delivered' or particular_product.status == 'return_requested' or particular_product.status == 'returned' or particular_product.status == 'return_denied' %}
+                                completed
+                            {% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <p>Out for Delivery</p>
+                        <div
+                            class="timeline-connector {% if particular_product.status == 'out_for_delivery' or particular_product.status == 'shipped' or particular_product.status == 'order_placed' or particular_product.status == 'processing' %}hidden{% endif %}">
+                        </div>
+                    </div>
+
+                    <!-- Delivered -->
+                    <div class="timeline-step 
+                            {% if particular_product.status == 'delivered' %}
+                                active
+                            {% elif particular_product.status == 'return_requested' or particular_product.status == 'returned' or particular_product.status == 'return_denied' %}
+                                completed
+                            {% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <p>Delivered</p>
+                        <div
+                            class="timeline-connector {% if particular_product.status == 'delivered' or particular_product.status == 'out_for_delivery' or particular_product.status == 'shipped' or particular_product.status == 'order_placed' or particular_product.status == 'processing' %}hidden{% endif %}">
+                        </div>
+                    </div>
+
+                    <!-- Return Steps -->
+                    <div
+                        class="timeline-step return-step return-requested {% if particular_product.status == 'return_requested' %}return-active{% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-arrow-return-left"></i>
+                        </div>
+                        <p>Return Requested</p>
+                        <div class="timeline-connector"></div>
+                    </div>
+
+                    <div
+                        class="timeline-step return-step returned {% if particular_product.status == 'returned' %}return-active{% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-arrow-return-right"></i>
+                        </div>
+                        <p>Returned</p>
+                    </div>
+
+                    <div
+                        class="timeline-step return-step return-denied {% if particular_product.status == 'return_denied' %}return-denied{% endif %}">
+                        <div class="icon">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                        <p>Return Denied</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+
+
+                <!-- Particular Product -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Color</th>
+                                <th>Size</th>
+                                <th>Price</th>
+                                <th>Offer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ particular_product.product.images.first.image.url }}"
+                                            class="product-image me-3" alt="{{ particular_product.product.name }}">
+                                        <span>{{ particular_product.product.name }}</span>
+
+                                    </div>
+                                </td>
+                                <td>{{ particular_product.product_variant.color }}</td>
+                                <td>{{ particular_product.product_variant.size }}</td>
+                                {% if particular_product.product.best_offer_price %}
+                                <td>₹{{ particular_product.product.price|floatformat:2 }}</td>
+                                <td>₹{{ particular_product.product.best_offer_price|floatformat:2 }}</td>
+                                {% else %}
+                                <td>₹{{ particular_product.product.price|floatformat:2 }}</td>
+                                <td>No offer</td>
+                                {% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Delivery Address -->
+                <div class="mt-4">
+                    <h5 class="mb-3">Delivery Address</h5>
+                    <div class="p-3 bg-light rounded">
+                        {{ order.shipping_address|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Update the button section in order_details.html -->
+                <div class="mt-4 d-flex gap-3">
+                    <a href="{% url 'user_orders' %}" class="back-btn">
+                        <i class="bi me-2 back"></i>Back to Orders
+                    </a>
+                    {% if particular_product.status != 'processing' and particular_product.status != 'out_for_delivery' and particular_product.status != 'delivered' and particular_product.status != 'canceled' and particular_product.status != 'return_requested' and particular_product.status != 'returned' and particular_product.status != 'return_denied' %}
+                    <a href="{% url 'cancel_order_item' particular_product.id %}" class="cancel-btn">
+                        <i class="bi me-2 cancel"></i>Cancel Product
+                    </a>
+                    {% endif %}
+                    {% if particular_product.status == 'delivered' and days_since_delivery <= 7 and particular_product.status != 'return_requested' %} <a
+                        href="{% url 'request_return' particular_product.id %}" class="return-btn">
+                        <i class="bi bi-arrow-return-left"></i> Request Return
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 2nd Container: Other Products in the Order -->
+            {% if other_products_in_order %}
+            <div class="details-card mb-4">
+                <h5 class="mb-3">Other Products in This Order</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Color</th>
+                                <th>Size</th>
+                                <th>Price</th>
+                                <th>Offer</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in other_products_in_order %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ item.product.images.first.image.url }}" class="product-image me-3"
+                                            alt="{{ item.product.name }}">
+                                        <span>{{ item.product.name }}</span>
+                                        <!-- Actions -->
+                                        <div class="col-md-4 text-end">
+                                            <a href="{% url 'user_order_details' item.id %}"
+                                                class="btn btn-primary btn-view-details me-2">View Details</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ item.product_variant.color }}</td>
+                                <td>{{ item.product_variant.size }}</td>
+                                {% if item.product.best_offer_price %}
+                                <td>₹{{ item.product.price|floatformat:2 }}</td>
+                                <td>₹{{ item.product.best_offer_price|floatformat:2 }}</td>
+                                {% else %}
+                                <td>{{ item.product.price|floatformat:2 }}</td>
+                                <td>No offer</td>
+                                {% endif %}
+                                <!-- <td>{{ item.get_status_display }}</td> -->
+                                <td class="mb-0">
+                                    <span class="status-dot status-{{ item.status }}"></span>
+                                    {{ item.get_status_display }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 3rd Container: Price Details -->
+            <div class="details-card">
+                <h5 class="mb-3">Price Details</h5>
+                <div class="price-details"></div>
+
+                <!-- Total Listed Price -->
+                <div class="price-row">
+                    <span>Total Listed Price</span>
+                    <span>₹{{ total_listed_price|floatformat:2 }}</span>
+                </div>
+
+                <!-- Total Offer Price -->
+                <div class="price-row">
+                    <span>Total Offer Price</span>
+                    <span>₹{{ total_offer_price|floatformat:2 }}</span>
+                </div>
+
+                <!-- Coupon Discounted Amount -->
+                {% if coupon_discount %}
+                <div class="price-row">
+                    <span>Coupon Disocount</span>
+                    <span class="text-success">₹{{ coupon_discount|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Discounted Amount -->
+                <div class="price-row">
+                    <span>You Save</span>
+                    <span class="text-success">₹{{ discounted_amount|floatformat:2 }}</span>
+                </div>
+
+                <!-- Delivery Charge -->
+                <div class="price-row">
+                    <span>Delivery Charge</span>
+                    {% if delivery_charge %}
+                    <span>₹{{ delivery_charge }}</span>
+                    {% else %}
+                    <span class="text-success">Free</span>
+                    {% endif %}
+                </div>
+
+                <!-- Grand Total -->
+                <div class="price-row total-row">
+                    <span>Total Amount</span>
+                    <span>₹{{ grand_total|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this modal at the end of the order_details.html template -->
+<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnModalLabel">Return Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Your return request has been submitted successfully.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const successMessages = "{{ messages|escapejs }}";
+        if (successMessages.includes("success")) {
+            $('#returnModal').modal('show');
+        }
+    });
+</script>
+
+
+
+
+
+<!-- External JS (e.g., Bootstrap) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+
+
+</body>
+
+</html>

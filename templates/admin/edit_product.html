@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Edit Product</title>
+    
+    
+    <link rel="shortcut icon" href="{% static 'adminuser/images/favicon.png' %}">
+    <!-- Internal CSS for dark theme -->
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            margin-top: 13px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        .form-group label {
+            color: #ffffff;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 0.9rem;
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .alert-container .alert {
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        /* Ensure the selected option is visible with white text */
+        select.form-control {
+            color: #5a6268 !important;
+        }
+
+        select.form-control option {
+            color: #ffffff !important;
+            background-color: #2d3035; /* Match the dropdown background */
+        }
+
+        /* Ensure the selected option is visible when the dropdown is not focused */
+        select.form-control:not(:focus) option:checked {
+            color: #ffffff !important;
+            background-color: #2d3035; /* Match the dropdown background */
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .alert-danger {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+            color: #ffffff;
+        }
+
+        .alert-info {
+            background-color: #03a9f4;
+            color: #ffffff;
+        }
+
+        @media (max-width: 991px) {
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <!-- Messages Block -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert alert-dismissible fade show {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Error Messages Block -->
+                    {% if errors %}
+                    <div class="alert alert-danger">
+                        <ul>
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Edit Product</h4>
+                                    <form id="editProductForm" method="POST" action="{% url 'edit_product' product.id %}">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="product_name">Product Name</label>
+                                            <input type="text" class="form-control {% if 'Product name is required' in errors %}is-invalid{% endif %}" id="product_name" name="product_name"
+                                                value="{{ form_data.product_name|default:product.name }}" required>
+                                            {% if 'Product name is required' in errors %}
+                                                <div class="error-message">Product name is required.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea class="form-control {% if 'Description is required' in errors %}is-invalid{% endif %}" id="description" name="description" rows="4" required>{{ form_data.description|default:product.description }}</textarea>
+                                            {% if 'Description is required' in errors %}
+                                                <div class="error-message">Description is required.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="category">Category</label>
+                                            <select class="form-control {% if 'Category is required' in errors %}is-invalid{% endif %}" id="category" name="category" required>
+                                                <option value="" disabled {% if not form_data.category %}selected{% endif %}>Select Category</option>
+                                                {% for category in categories %}
+                                                <option value="{{ category.id }}" {% if form_data.category == category.id|stringformat:"s" or product.category.id == category.id %}selected{% endif %}>
+                                                    {{ category.category_name }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            {% if 'Category is required' in errors %}
+                                                <div class="error-message">Category is required.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Price</label>
+                                            <input type="number" class="form-control {% if 'Price must be greater than zero.' in errors %}is-invalid{% endif %}" id="price" name="price" step="0.01" min="0"
+                                                value="{{ form_data.price|default:product.price }}" required>
+                                            {% if 'Price must be greater than zero.' in errors %}
+                                                <div class="error-message">Price must be greater than zero.</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mt-4">
+                                            <button type="submit" class="btn btn-success">Update Product</button>
+                                            <a href="{% url 'product_management' %}" class="btn btn-secondary">Cancel</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'adminuser/vendors/js/vendor.bundle.base.js' %}"></script>
+</body>
+
+</html>

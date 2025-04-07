@@ -1,0 +1,647 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!--=============== FLATICON ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+    />
+    
+    <!--=============== SWIPER CSS ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <title>Ecommerce Website</title>
+    
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+
+
+ 
+
+
+
+
+
+
+
+  </head>
+  <body>
+    <!--=============== HEADER ===============-->
+
+    {% include 'header.html' %}
+
+     <!--=============== HEADER ===============-->
+
+    <div id="notification" class="notification"></div>
+
+<style>
+    .notification {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        display: none;
+    }
+    .success {
+        background-color: #4CAF50;
+    }
+    .error {
+        background-color: #FF5733;
+    }
+</style>
+
+
+
+
+<style>
+  /* Message Container - Centers messages */
+.message-container {
+position: fixed;
+top: 16%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 9999;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+/* Message Box Styling */
+.alert {
+background-color: #333;
+color: white;
+padding: 15px 20px;
+border-radius: 8px;
+font-size: 16px;
+text-align: center;
+margin: 10px 0;
+min-width: 300px;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+position: relative;
+}
+
+/* Success & Error Colors */
+.alert-success { background-color: #28a745; }
+.alert-error { background-color: #dc3545; }
+.alert-warning { background-color: #ffc107; }
+
+/* Close Button */
+.close-btn {
+position: absolute;
+top: 5px;
+right: 10px;
+border: none;
+background: none;
+color: white;
+font-size: 20px;
+cursor: pointer;
+}
+</style>
+
+
+
+
+
+
+{% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+
+
+
+    <!--=============== MAIN ===============-->
+    <main class="main">
+      <!--=============== HOME ===============-->
+      <section class="home section--lg">
+        <div class="home__container container grid">
+          <div class="home__content">
+            <span class="home__subtitle">Hot Promotions</span>
+            <h1 class="home__title">
+              Prayer Dress <span>Great Collection</span>
+            </h1>
+            <p class="home__description">
+              Save more with coupons & up to 20% off
+            </p>
+            <a href="shop.html" class="btn">Shop Now</a>
+          </div>
+          <img src="" class="home__img" alt="" />
+        </div>
+      </section>
+
+      <!--=============== CATEGORIES ===============-->
+      <section class="categories container section">
+        <h3 class="section__title"><span>Popular</span> Categories</h3>
+        <div class="categories__container swiper">
+          <div class="swiper-wrapper">
+           {% for category in categories %}
+            <a href="#" class="category__item swiper-slide">
+              <img
+                src="{{ category.image.url }}"
+                alt="{{category.category_name}}"
+                class="category__img"
+              />
+              <h3 class="category__title">{{category.category_name}}</h3>
+            </a>
+            {% endfor %}
+            
+          </div>
+          <div class="swiper-button-prev">
+            <i class="fi fi-rs-angle-left"></i>
+          </div>
+          <div class="swiper-button-next">
+            <i class="fi fi-rs-angle-right"></i>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!--=============== PRODUCTS ===============-->
+      <section class="products container section">
+        <div class="tab__btns">
+          <span class="tab__btn active-tab" data-target="#featured">Featured</span>
+          <span class="tab__btn" data-target="#popular">Popular</span>
+          <span class="tab__btn" data-target="#new-added">Bestseller</span>
+        </div>
+
+        <div class="tab__items">
+          <div class="tab__item active-tab" content id="featured">
+            <div class="products__container grid">
+              
+
+
+
+              {% for product in random_products %}
+              <div class="product__item">
+                <div class="product__banner">
+                  <a href="details.html" class="product__images">
+                    {% if product.images.first %}
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img default"
+                    />
+                    
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img hover"
+                    />
+                    {% endif %}
+                  </a>
+                  <div class="product__actions">
+                    <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
+                      <i class="fi fi-rs-eye"></i>
+                    </a>
+                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                      <i class="fi fi-rs-heart"></i>
+                    </a>
+                    <!-- <a href="#" class="action__btn" aria-label="Compare">
+                      <i class="fi fi-rs-shuffle"></i>
+                    </a> -->
+                  </div>
+                  <div class="product__badge light-pink">Hot</div>
+                </div>
+                <div class="product__content">
+                  <span class="product__category">{{category.category_name}}</span>
+                  <a href="details.html">
+                    <h3 class="product__title">{{product.name}}</h3>
+                  </a>
+                  <div class="product__rating">
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                  </div>
+                  <div class="product__price flex">
+                    <span class="new__price">{{ product.price | floatformat:2 }}</span>
+                    <span class="old__price">2000</span>
+                  </div>
+                  <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                  </a>
+                </div>
+              </div>
+              {% endfor %}
+
+            </div>
+          </div>
+
+
+
+
+          <div class="tab__item" content id="popular">
+            <div class="products__container grid">
+              {% for product in random_popular_products %}
+              <div class="product__item">
+                <div class="product__banner">
+                  <a href="details.html" class="product__images">
+                    
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img default"
+                    />
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img hover"
+                    />
+                    
+                  </a>
+                  <div class="product__actions">
+                    <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
+                      <i class="fi fi-rs-eye"></i>
+                    </a>
+                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                      <i class="fi fi-rs-heart"></i>
+                    </a>
+                    <!-- <a href="#" class="action__btn" aria-label="Compare">
+                      <i class="fi fi-rs-shuffle"></i>
+                    </a> -->
+                  </div>
+                  <div class="product__badge light-pink">Hot</div>
+                </div>
+                <div class="product__content">
+                  <span class="product__category">{{category.category_name}}</span>
+                  <a href="details.html">
+                    <h3 class="product__title">{{product.name}}</h3>
+                  </a>
+                  <div class="product__rating">
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                  </div>
+                  <div class="product__price flex">
+                    <span class="new__price">{{ product.price | floatformat:2 }}</span>
+                    <span class="old__price">2000</span>
+                  </div>
+                  <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                  </a>
+                </div>
+              </div>
+              {% endfor %}
+
+
+
+
+
+              
+            </div>
+          </div>
+          <div class="tab__item" content id="new-added">
+            <div class="products__container grid">
+              {% for product in random_bestseller_products %}
+              <div class="product__item">
+                <div class="product__banner">
+                  <a href="details.html" class="product__images">
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img default"
+                    />
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img hover"
+                    />
+                  </a>
+                  <div class="product__actions">
+                    <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
+                      <i class="fi fi-rs-eye"></i>
+                    </a>
+                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                      <i class="fi fi-rs-heart"></i>
+                    </a>
+                    <!-- <a href="#" class="action__btn" aria-label="Compare">
+                      <i class="fi fi-rs-shuffle"></i>
+                    </a> -->
+                  </div>
+                  <div class="product__badge light-pink">Hot</div>
+                </div>
+                <div class="product__content">
+                  <span class="product__category">{{category.category_name}}</span>
+                  <a href="details.html">
+                    <h3 class="product__title">{{product.name}}</h3>
+                  </a>
+                  <div class="product__rating">
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                    <i class="fi fi-rs-star"></i>
+                  </div>
+                  <div class="product__price flex">
+                    <span class="new__price">{{ product.price | floatformat:2 }}</span>
+                    <span class="old__price">2000</span>
+                  </div>
+                  <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
+                  </a>
+                </div>
+              </div>
+              {% endfor %}
+
+
+
+
+
+              
+             
+
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+            <!--=============== DEALS ===============-->
+      
+      <!--=============== NEW ARRIVALS ===============-->
+      <section class="new__arrivals container section">
+        <h3 class="section__title"><span>New</span> Arrivals</h3>
+        <div class="new__container swiper">
+          <div class="swiper-wrapper">
+            {% for product in random_newarrival_products %}
+            <div class="product__item swiper-slide">
+              <div class="product__banner">
+                <a href="details.html" class="product__images">
+                  <img
+                    src="{{product.images.first.image.url}}"
+                    alt="{{product.name}}"
+                    class="product__img default"
+                  />
+                  <img
+                    src="{{product.images.first.image.url}}"
+                    alt="{{product.name}}"
+                    class="product__img hover"
+                  />
+                </a>
+                <div class="product__actions">
+                  <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
+                    <i class="fi fi-rs-eye"></i>
+                  </a>
+                  <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                    <i class="fi fi-rs-heart"></i>
+                  </a>
+                  <!-- <a href="#" class="action__btn" aria-label="Compare">
+                    <i class="fi fi-rs-shuffle"></i>
+                  </a> -->
+                </div>
+                <div class="product__badge light-pink">Hot</div>
+              </div>
+              <div class="product__content">
+                <span class="product__category">{{category.category_name}}</span>
+                <a href="details.html">
+                  <h3 class="product__title">{{product.name}}</h3>
+                </a>
+                <div class="product__rating">
+                  <i class="fi fi-rs-star"></i>
+                  <i class="fi fi-rs-star"></i>
+                  <i class="fi fi-rs-star"></i>
+                  <i class="fi fi-rs-star"></i>
+                  <i class="fi fi-rs-star"></i>
+                </div>
+                <div class="product__price flex">
+                  <span class="new__price">{{product.price | floatformat:2}}</span>
+                  <span class="old__price">$2000</span>
+                </div>
+                <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                  <i class="fi fi-rs-shopping-bag-add"></i>
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+
+
+
+            
+          </div>
+          <div class="swiper-button-prev">
+            <i class="fi fi-rs-angle-left"></i>
+          </div>
+          <div class="swiper-button-next">
+            <i class="fi fi-rs-angle-right"></i>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+
+
+
+
+
+
+
+
+
+
+    <!--=============== SHOWCASE ===============-->
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!--=============== NEWSLETTER ===============-->
+    <section class="newsletter section home__newsletter">
+      <div class="newsletter__container container grid">
+        <h3 class="newsletter__title flex">
+          <img
+            src="{% static 'assets/img/icon-email.svg' %}"
+            alt=""
+            class="newsletter__icon"
+          />
+          Sign in to Newsletter
+        </h3>
+        <p class="newsletter__description">
+          ...and receive $25 coupon for first shopping.
+        </p>
+        <form action="" class="newsletter__form">
+          <input
+            type="text"
+            placeholder="Enter Your Email"
+            class="newsletter__input"
+          />
+          <button type="submit" class="newsletter__btn">Subscribe</button>
+        </form>
+      </div>
+    </section>
+    </main>
+
+
+
+
+
+
+
+
+   <!--=============== FOOTER ===============-->
+   <footer class="footer container">
+    <div class="footer__container grid">
+      <div class="footer__content">
+        <a href="index.html" class="footer__logo">
+          <img
+            src="{% static 'assets/img/logo.svg' %}"
+            alt=""
+            class="footer__logo-img"
+          />
+        </a>
+        <h4 class="footer__subtitle">Contact</h4>
+        <p class="footer__description">
+          <span>Address:</span> 13 Tlemcen Road, Street 32, Beb-Wahren
+        </p>
+        <p class="footer__description">
+          <span>Phone:</span> +01 2222 365 /(+91) 01 2345 6789
+        </p>
+        <p class="footer__description">
+          <span>Hours:</span> 10:00 - 18:00, Mon - Sat
+        </p>
+        <div class="footer__social">
+          <h4 class="footer__subtitle">Follow Me</h4>
+          <div class="footer__links flex">
+            <a href="#">
+              <img
+                src="{% static 'assets/img/icon-facebook.svg' %}"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="{% static 'assets/img/icon-twitter.svg' %}"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="{% static 'assets/img/icon-instagram.svg' %}"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="{% static 'assets/img/icon-pinterest.svg' %}"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="{% static 'assets/img/icon-youtube.svg' %}"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Address</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">About Us</a></li>
+          <li><a href="#" class="footer__link">Delivery Information</a></li>
+          <li><a href="#" class="footer__link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__link">Terms & Conditions</a></li>
+          <li><a href="#" class="footer__link">Contact Us</a></li>
+          <li><a href="#" class="footer__link">Support Center</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">My Account</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">Sign In</a></li>
+          <li><a href="#" class="footer__link">View Cart</a></li>
+          <li><a href="#" class="footer__link">My Wishlist</a></li>
+          <li><a href="#" class="footer__link">Track My Order</a></li>
+          <li><a href="#" class="footer__link">Help</a></li>
+          <li><a href="#" class="footer__link">Order</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Secured Payed Gateways</h3>
+        <img
+          src="{% static 'assets/img/payment-method.png' %}"
+          alt=""
+          class="payment__img"
+        />
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="copyright">© 2024 Evara. All right reserved</p>
+      <span class="designer">Designer by Crypticalcoder</span>
+    </div>
+  </footer>
+
+    <!--=============== SWIPER JS ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!--=============== MAIN JS ===============-->
+    <script src="{% static 'js/main.js' %}"></script>
+
+
+
+
+
+    <script>
+
+      function showNotification(message, type) {
+        let notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.classList.add(type === "success" ? "success" : "error");
+        notification.style.display = "block";
+
+        setTimeout(() => {
+            notification.style.display = "none";
+        }, 3000);
+    }
+
+
+    </script>
+
+
+
+
+
+  </body>
+</html>
