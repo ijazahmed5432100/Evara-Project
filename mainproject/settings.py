@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+# Load environment variables from .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -123,8 +129,8 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-SOCIAL_AUTH_GOOGLE_CLIENT_ID = '260233505387-8okqklof253gf5cqtqnkfqciv1576i3r.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_SECRET = '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',
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.getenv('260233505387-8okqklof253gf5cqtqnkfqciv1576i3r.apps.googleusercontent.com') 
+SOCIAL_AUTH_GOOGLE_SECRET = os.getenv('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')
 
 
 
