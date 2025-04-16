@@ -258,13 +258,13 @@
                                                         {% endfor %}
                                                     </td>
                                                     <td>₹{{ product.price|floatformat:2 }}</td>
-                                                    <td>
-                                                        {% if product.final_offer_price is not None %}
-                                                        ₹{{ product.final_offer_price|floatformat:2 }}
-                                                        {% else %}
-                                                        No Offer
-                                                        {% endif %}
-                                                    </td>
+                                                        <td>
+                                                            {% if product.best_offer_price is not None %}
+                                                            ₹{{ product.best_offer_price|floatformat:2 }}
+                                                            {% else %}
+                                                            No Offer
+                                                            {% endif %}
+                                                        </td>
                                                     <td>
                                                         {% for image in product.images.all %}
                                                         <img src="{{ image.image.url }}" alt="Product Image"

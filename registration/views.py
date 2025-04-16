@@ -12,6 +12,8 @@ import random
 import re
 from django.http import JsonResponse
 import secrets
+from user_profile.models import Referral
+from wallet.models import Wallet, WalletTransaction
 
 
 """
@@ -62,6 +64,9 @@ def validate_password(password):
 
 
 
+"""
+USER LOGIN
+"""
 @never_cache
 def LoginPage(request):
     if request.user.is_authenticated:
@@ -139,6 +144,18 @@ def SignupPage(request):
                 messages.error(request,error)
             return render(request, 'signup.html', {'form_data': form_data})
         
+        #validate referral code
+        referred_by = None
+        if referral_code:
+            try:
+                referral = Referral.objects.get(referral_code=referral_code)
+                referred_by = referral.user
+            except Referral.DoesNotExist:
+                messages.error(request, "Invalid referral code.")
+                return render(request, 'register.html', {'form_data': form_data})
+            
+
+        
 
         otp = generate_otp()
         expires_at = django_timezone.now() + timedelta(minutes=1)
@@ -215,6 +232,44 @@ def verify_otp(request):
                 last_name=last_name
                                               
             )
+
+            # Create a referral entry for the new user
+            Referral.objects.create(user=user)
+
+            # Credit ₹50 to the new user's wallet
+            wallet, _ = Wallet.objects.get_or_create(user=user)
+            #WalletTransaction.objects.create()
+
+            # Handle referral code
+            if referral_code:
+                try:
+                    referral = Referral.objects.get(referral_code=referral_code)
+                    referred_by = referral.user
+                    Referral.objects.filter(user=user).update(referred_by=referred_by)
+
+                    # wallet, _ = Wallet.objects.get_or_create(user=user)
+                    wallet.balance += 50
+                    wallet.save()
+                    WalletTransaction.objects.create(
+                        wallet=wallet,
+                        amount=50,
+                        transaction_type='credit',
+                        description='Referral bonus for new user'
+                    )
+
+                    # Credit ₹100 to the referred user's wallet
+                    referred_wallet, _ = Wallet.objects.get_or_create(user=referred_by)
+                    referred_wallet.balance += 100
+                    referred_wallet.save()
+                    WalletTransaction.objects.create(
+                        wallet=referred_wallet,
+                        amount=100,
+                        transaction_type='credit',
+                        description='Referral bonus for referring user'
+                    )
+                except Referral.DoesNotExist:
+                    pass 
+
 
 
 

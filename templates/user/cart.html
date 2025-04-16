@@ -179,6 +179,80 @@
 
 
 
+      /* Confirmation Modal Styles */
+      #confirmationModal {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      #confirmationModal .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      #confirmationModal .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1a1a1a;
+      }
+
+      #confirmationModal .modal-message {
+        color: #4b5563;
+        margin-bottom: 1.5rem;
+      }
+
+      #confirmationModal .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+
+      #confirmationModal .btn-cancel {
+        padding: 0.5rem 1rem;
+        color: #4b5563;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      #confirmationModal .btn-cancel:hover {
+        color: #1a1a1a;
+      }
+
+      #confirmationModal .btn-confirm {
+        padding: 0.5rem 1rem;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #confirmationModal .btn-confirm:hover {
+        background: #b91c1c;
+      }
+
+
+
+
+
+
+
+
+
+
     </style>
 
 
@@ -370,9 +444,13 @@
                   <td>
                       <span class="subtotal">₹{{ item.subtotal|floatformat:2 }}</span>
                   </td>
-                  <td>
+                  <!-- <td>
                       <i class="fi fi-rs-trash table__trash" 
                       onclick="removeFromCart('{{ item.id }}', event)"></i>
+                  </td> -->
+                  <td>
+                    <i class="fi fi-rs-trash table__trash" 
+                       onclick="showConfirmationModal('{{ item.id }}', event)"></i>
                   </td>
               </tr>
               {% endfor %}
@@ -453,6 +531,36 @@
     <!--=============== FOOTER ===============-->
     {% include 'footer.html' %}
 
+
+
+
+
+
+ <!-- Confirmation Modal -->
+ <div id="confirmationModal">
+  <div class="modal-content">
+    <h3 class="modal-title">Remove Item</h3>
+    <p class="modal-message">Are you sure you want to remove this item from your cart?</p>
+    <div class="modal-actions">
+      <button onclick="cancelRemove()" class="btn-cancel">
+        Cancel
+      </button>
+      <button id="confirmRemoveBtn" class="btn-confirm">
+        Remove
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
     <!--=============== SWIPER JS ===============-->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
@@ -467,6 +575,130 @@
 
 
 
+
+    <script>
+
+
+      let itemIdToRemove = null;
+
+      function showConfirmationModal(itemId, event) {
+        if (event) {
+          event.preventDefault();
+        }
+        itemIdToRemove = itemId;
+        document.getElementById('confirmationModal').style.display = 'flex';
+      }
+
+      function cancelRemove() {
+        document.getElementById('confirmationModal').style.display = 'none';
+        itemIdToRemove = null;
+      }
+
+      function hideError() {
+        document.getElementById('error-message').style.display = 'none';
+      }
+
+      function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        const errorText = document.getElementById('error-message-text');
+        errorText.textContent = message;
+        errorDiv.style.display = 'flex';
+
+        setTimeout(() => {
+          hideError();
+        }, 3000);
+      }
+
+      function removeFromCart(itemId, event) {
+        if (event) {
+          event.preventDefault();
+        }
+
+        fetch(`/cart/remove_from_cart/${itemId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'error') {
+            showError(data.message);
+          } else {
+            location.reload();
+          }
+          document.getElementById('confirmationModal').style.display = 'none';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showError('An unexpected error occurred');
+          document.getElementById('confirmationModal').style.display = 'none';
+        });
+      }
+
+
+
+      function updateCart(itemId, action, event) {
+        if (event) {
+          event.preventDefault();
+        }
+
+        fetch(`/cart/update_cart/${itemId}/${action}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'error') {
+            showError(data.message);
+          } else {
+            location.reload();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showError('An unexpected error occurred');
+        });
+      }
+
+      // Add click event listener for the confirm button
+      document.getElementById('confirmRemoveBtn').addEventListener('click', function() {
+        if (itemIdToRemove) {
+          removeFromCart(itemIdToRemove);
+        }
+      });
+
+      // Close modal when clicking outside
+      document.getElementById('confirmationModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+          cancelRemove();
+        }
+      });
+
+      // Add ESC key support to close modal
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && document.getElementById('confirmationModal').style.display === 'flex') {
+          cancelRemove();
+        }
+      });
+
+      // Handle clicks outside error message
+      document.addEventListener('click', function(event) {
+        const errorMessage = document.getElementById('error-message');
+        const isClickInside = errorMessage.contains(event.target);
+
+        if (!isClickInside && errorMessage.style.display === 'flex') {
+          hideError();
+        }
+      });
+
+
+
+    </script>
   
 
 

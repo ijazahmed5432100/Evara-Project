@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Address,ShippingAddress,Profile
+from .models import Address,ShippingAddress,Profile, Referral
 from django.contrib import messages
 import re
 from django.contrib.auth import update_session_auth_hash
@@ -47,8 +47,10 @@ def user_profile(request):
         return redirect('user_profile')
 
     addresses = Address.objects.filter(user=request.user, is_deleted=False)
+    referral = Referral.objects.filter(user=request.user).first()
     context = {
-        'addresses': addresses
+        'addresses': addresses,
+        'referral': referral,
     }
     return render(request, 'user/profile.html', context)
 

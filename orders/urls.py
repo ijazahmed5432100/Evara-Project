@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views 
 
+
+
 urlpatterns = [
     path('checkout/', views.place_order, name='place_order'),
     path('orders/order-success/<str:order_id>/', views.order_success, name='order_success'),

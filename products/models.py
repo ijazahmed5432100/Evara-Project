@@ -13,64 +13,64 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
-    # @property
-    # def best_offer_price(self):
-    #     product_offer = None
-    #     if hasattr(self, 'product_offer'):
-    #         product_offer = self.product_offer if self.product_offer.is_active else None
+    @property
+    def best_offer_price(self):
+        product_offer = None
+        if hasattr(self, 'product_offer'):
+            product_offer = self.product_offer if self.product_offer.is_active else None
 
-    #     category_offer = None
-    #     if hasattr(self.category, 'category_offer'):
-    #         category_offer = self.category.category_offer if self.category.category_offer.is_active else None
+        category_offer = None
+        if hasattr(self.category, 'category_offer'):
+            category_offer = self.category.category_offer if self.category.category_offer.is_active else None
 
-    #     offers = []
-    #     if product_offer:
-    #         offers.append(product_offer.discount_percentage)
-    #     if category_offer:
-    #         offers.append(category_offer.discount_percentage)
+        offers = []
+        if product_offer:
+            offers.append(product_offer.discount_percentage)
+        if category_offer:
+            offers.append(category_offer.discount_percentage)
 
-    #     if offers:
-    #         best_discount = max(offers)
-    #         # Convert self.price to float before multiplication
-    #         return round(float(self.price) * (1 - float(best_discount) / 100), 2)
-    #     return None
+        if offers:
+            best_discount = max(offers)
+            # Convert self.price to float before multiplication
+            return round(float(self.price) * (1 - float(best_discount) / 100), 2)
+        return None
 
 
-    # @property
-    # def has_offer(self):
-    #     return self.best_offer_price is not None
+    @property
+    def has_offer(self):
+        return self.best_offer_price is not None
     
-    # @property
-    # def best_offer_percentage(self):
-    #     # Check for active product offer
-    #     product_offer = None
-    #     if hasattr(self, 'product_offer'):
-    #         product_offer = self.product_offer if self.product_offer.is_active else None
+    @property
+    def best_offer_percentage(self):
+        # Check for active product offer
+        product_offer = None
+        if hasattr(self, 'product_offer'):
+            product_offer = self.product_offer if self.product_offer.is_active else None
 
-    #     # Check for active category offer
-    #     category_offer = None
-    #     if hasattr(self.category, 'category_offer'):
-    #         category_offer = self.category.category_offer if self.category.category_offer.is_active else None
+        # Check for active category offer
+        category_offer = None
+        if hasattr(self.category, 'category_offer'):
+            category_offer = self.category.category_offer if self.category.category_offer.is_active else None
 
-    #     offers = []
-    #     if product_offer:
-    #         offers.append(product_offer.discount_percentage)
-    #     if category_offer:
-    #         offers.append(category_offer.discount_percentage)
+        offers = []
+        if product_offer:
+            offers.append(product_offer.discount_percentage)
+        if category_offer:
+            offers.append(category_offer.discount_percentage)
 
-    #     if offers:
-    #         return int(max(offers))
-    #     return 0
+        if offers:
+            return int(max(offers))
+        return 0
 
 
     
-    # @property
-    # def average_rating(self):
-    #     return self.review_set.aggregate(Avg('rating'))['rating__avg'] or 0
+    @property
+    def average_rating(self):
+        return self.review_set.aggregate(Avg('rating'))['rating__avg'] or 0
 
-    # @property
-    # def review_count(self):
-    #     return self.review_set.aggregate(Count('id'))['id__count'] or 0
+    @property
+    def review_count(self):
+        return self.review_set.aggregate(Count('id'))['id__count'] or 0
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')

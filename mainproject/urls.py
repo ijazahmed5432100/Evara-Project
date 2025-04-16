@@ -34,7 +34,9 @@ urlpatterns = [
     path('wishlist/', include('wishlist.urls')),
     path('', include('user_profile.urls')),
     path('orders/', include('orders.urls')),
-    
+    path('payments/', include('payments.urls')),
+    path('coupons/', include('coupons.urls')),
+    path('offers/', include('offers.urls')),
     
     
 ]

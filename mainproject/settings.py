@@ -58,6 +58,10 @@ INSTALLED_APPS = [
     'wishlist',
     'user_profile',
     'orders',
+    'payments',
+    'offers',
+    'coupons',
+
 
 
     # Required for allauth
@@ -131,6 +135,17 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID') 
 SOCIAL_AUTH_GOOGLE_SECRET = os.getenv('GOOGLE_CLIENT_SECRET') 
+
+
+
+
+
+
+RAZORPAY_KEY_ID = "rzp_test_uE16wbUery9QQP"
+RAZORPAY_KEY_SECRET = "lxeIJBCiS8GqBe3l4s5GYweQ"
+
+
+
 
 
 

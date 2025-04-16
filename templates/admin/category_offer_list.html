@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Category Offers</title>
+    <link rel="stylesheet" href="{% static 'adminuser/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'adminuser/vendors/css/vendor.bundle.base.css' %}"> -->
+    <!-- <link rel="stylesheet" href="{% static 'adminuser/css/style.css' %}"> -->
+    <link rel="shortcut icon" href="{% static 'adminuser/images/favicon.png' %}">
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            color: #ffffff;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #3699ff;
+            color: #3699ff;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #444;
+        }
+
+        .table tbody tr:hover {
+            background-color: #3a3f45;
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+
+        .btn-outline-danger {
+            color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        .alert-container .alert {
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .alert-danger {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+            color: #ffffff;
+        }
+
+        .alert-info {
+            background-color: #03a9f4;
+            color: #ffffff;
+        }
+
+        /* Center the pagination controls */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination .step-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination .step-links .btn {
+            margin: 0 5px;
+        }
+
+        @media (max-width: 991px) {
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <!-- Messages Block -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert alert-dismissible fade show {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Category Offers</h4>
+                                    <div class="mb-4">
+                                        <form method="GET" action="">
+                                            <div class="input-group">
+                                                <input type="text" name="q" class="form-control" placeholder="Search categories..." value="{{ request.GET.q }}">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary" type="submit">Search</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <a href="{% url 'add_category_offer' %}" class="btn btn-primary mb-4">+ Add New Category Offer</a>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th>Discount Percentage</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for offer in category_offers %}
+                                                <tr>
+                                                    <td>{{ offer.category.category_name }}</td>
+                                                    <td>{{ offer.discount_percentage }}%</td>
+                                                    <td>
+                                                        <span class="badge {% if offer.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                                                            {% if offer.is_active %}Active{% else %}Inactive{% endif %}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'edit_category_offer' offer.category.id %}" class="btn btn-success">Edit</a>
+                                                        <a href="{% url 'toggle_category_offer' offer.category.id %}" class="btn {% if offer.is_active %}btn-outline-danger{% else %}btn-outline-secondary{% endif %}">
+                                                            {% if offer.is_active %}Deactivate{% else %}Activate{% endif %}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center">No category offers found</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="pagination">
+                                        <span class="step-links">
+                                            {% if category_offers.has_previous %}
+                                                <a href="?page={{ category_offers.previous_page_number }}&q={{ request.GET.q }}" class="btn btn-primary">Previous</a>
+                                            {% endif %}
+                                            <span class="current">
+                                                Page {{ category_offers.number }} of {{ category_offers.paginator.num_pages }}
+                                            </span>
+                                            {% if category_offers.has_next %}
+                                                <a href="?page={{ category_offers.next_page_number }}&q={{ request.GET.q }}" class="btn btn-primary">Next</a>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <a href="{% url 'offer_management' %}" class="btn btn-secondary mt-4">Back</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'adminuser/vendors/js/vendor.bundle.base.js' %}"></script>
+</body>
+
+</html>

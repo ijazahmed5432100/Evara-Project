@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product, ProductVariant
-# from couponsapp.models import Coupon, CouponUsage
+from coupons.models import Coupon, CouponUsage
 from user_profile.models import Address, ShippingAddress
 from django.utils import timezone
 
@@ -27,7 +27,7 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=20)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=20, default='Pending')
-    # coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
     discount_applied = models.BooleanField(default=False)
     discount_coupon_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     balance_refund = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) 
@@ -107,6 +107,7 @@ class OrderItem(models.Model):
     return_requested_at = models.DateTimeField(blank=True, null=True)
     returned_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
+    final_offer_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"

@@ -3,9 +3,36 @@
 <html lang="en">
 
 <head>
+
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Order Details</title>
+
+
+
+        <!--=============== FLATICON ===============-->
+        <link rel="stylesheet" href="{% static 'admin/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'admin/images/favicon.png' %}">
+    <link
+        rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+      />
+  
+      <!--=============== SWIPER CSS ===============-->
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  
+  
+        <meta name="csrf-token" content="{{ csrf_token }}">
+  
+      
+  
+      <!--=============== CSS ===============-->
+      <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     
     
     
@@ -153,8 +180,8 @@
         }
 
         .modal-content {
-            background-color: #2d3035;
-            color: #ffffff;
+            background-color: #053b99;
+            color: #000000;
         }
 
         .modal-header {
@@ -221,6 +248,7 @@
         .pagination .step-links .btn {
             margin: 0 5px;
         }
+        
 
         @media (max-width: 991px) {
             .container-fluid.page-body-wrapper {
@@ -387,7 +415,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body" style="color: #053b99;">
                                     {{ item.cancel_reason }}
                                 </div>
                                 <div class="modal-footer">
@@ -408,8 +436,8 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
-                                    {{ item.return_reason }}
+                                <div class="modal-body"  style="color: #053b99;">
+                                    <p style="color: red;">{{ item.return_reason }}</p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -486,3 +514,4 @@
 </body>
 
 </html>
+<!-- //----------------------------------------------------------------------------- -->

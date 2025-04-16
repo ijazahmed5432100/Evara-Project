@@ -1,0 +1,382 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Offer Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --primary-hover: #3558e6;
+            --sidebar-bg: #111827;
+            --main-bg: #f9fafb;
+            --card-bg: #ffffff;
+            --text-dark: #111827;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        body {
+            background-color: var(--main-bg);
+            color: var(--text-dark);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container-scroller {
+            
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        
+
+        .container-fluid.page-body-wrapper {
+            margin-left: 260px;
+            flex-grow: 1;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 260px);
+        }
+
+        .main-panel {
+            background-color: var(--main-bg);
+            min-height: 100vh;
+            padding: 20px;
+            
+            transition: all 0.3s ease;
+        }
+
+        .content-wrapper {
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .card-title {
+            color: var(--text-dark);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .card-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            width: 40px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 12px rgba(74, 108, 247, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .alert-container {
+            margin-bottom: 24px;
+        }
+
+        .alert {
+            padding: 14px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+            border-left: 4px solid var(--info);
+        }
+
+        .close {
+            background: none;
+            border: none;
+            color: currentColor;
+            font-size: 20px;
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            opacity: 1;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .breadcrumb-item + .breadcrumb-item:before {
+            content: '/';
+            padding: 0 8px;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary-color);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .widget-card {
+            padding: 24px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .widget-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .widget-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin-bottom: 16px;
+            background-color: rgba(74, 108, 247, 0.1);
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .widget-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-260px);
+            }
+
+            .container-fluid.page-body-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        <div class="sidebar">
+            {% include 'admin/sidebar.html' %}
+        </div>
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <!-- Page Header -->
+                    <!-- <div class="page-header">
+                        <div>
+                            <h1 class="page-title"></h1>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#"></a></li>
+                                <li class="breadcrumb-item active"> </li>
+                            </ul>
+                        </div>
+                    </div> -->
+
+                    <!-- Messages Block -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
+                            <div>
+                                {% if message.tags == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                                {% else %}
+                                <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                                <span style="margin-left: 8px;">{{ message }}</span>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Offer Management Options -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Manage Offers</h4>
+                                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                                        Create and manage discounts for your products and categories
+                                    </p>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="widget-card">
+                                                <div class="widget-icon">
+                                                    <i class="fas fa-tags"></i>
+                                                </div>
+                                                <h3 class="widget-title">Product Offers</h3>
+                                                <p class="widget-subtitle">Create offers for specific products</p>
+                                                <a href="{% url 'product_offer_list' %}" class="btn btn-primary" style="margin-top: 16px;">
+                                                    <i class="fas fa-arrow-right"></i> Manage Product Offers
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="widget-card">
+                                                <div class="widget-icon">
+                                                    <i class="fas fa-layer-group"></i>
+                                                </div>
+                                                <h3 class="widget-title">Category Offers</h3>
+                                                <p class="widget-subtitle">Create offers for entire categories</p>
+                                                <a href="{% url 'category_offer_list' %}" class="btn btn-primary" style="margin-top: 16px;">
+                                                    <i class="fas fa-arrow-right"></i> Manage Category Offers
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Close alert on click
+        $(document).on('click', '.close', function() {
+            $(this).closest('.alert').fadeOut();
+        });
+    </script>
+</body>
+
+</html>

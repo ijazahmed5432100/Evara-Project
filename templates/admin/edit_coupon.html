@@ -1,0 +1,251 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% if coupon %}Edit Coupon{% else %}Add Coupon{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'adminuser/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminuser/vendors/css/vendor.bundle.base.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'adminuser/css/style.css' %}"> -->
+    <!-- <link rel="shortcut icon" href="{% static 'adminuser/images/favicon.png' %}"> -->
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .container-fluid.page-body-wrapper {
+            
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-panel {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #2d3035;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            background-color: #3a3f45;
+            border: 1px solid #444;
+            color: #ffffff;
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .form-control:focus {
+            background-color: #3a3f45;
+            border-color: #3699ff;
+            color: #ffffff;
+        }
+
+        .alert-container .alert {
+            border-radius: 4px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .alert-success {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+
+        .alert-danger {
+            background-color: #ff4d4d;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-top: 5px;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .error-message li {
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <!-- Messages Block -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert alert-dismissible fade show {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">{% if coupon %}Edit Coupon{% else %}Add Coupon{% endif %}
+                                    </h4>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="{{ form.coupon_code.id_for_label }}">Coupon Code</label>
+                                            {{ form.coupon_code }}
+                                            {% if form.coupon_code.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.coupon_code.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <!-- Inside the form, add this block -->
+                                        <div class="form-group">
+                                            <label for="{{ form.description.id_for_label }}">Description</label>
+                                            {{ form.description }}
+                                            {% if form.description.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.description.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{ form.minimum_purchase_amount.id_for_label }}">Minimum
+                                                Purchase Amount</label>
+                                            {{ form.minimum_purchase_amount }}
+                                            {% if form.minimum_purchase_amount.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.minimum_purchase_amount.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{ form.discount_percentage.id_for_label }}">Discount
+                                                Percentage</label>
+                                            {{ form.discount_percentage }}
+                                            {% if form.discount_percentage.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.discount_percentage.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{ form.max_discount_amount.id_for_label }}">Maximum Discount
+                                                Amount</label>
+                                            {{ form.max_discount_amount }}
+                                            {% if form.max_discount_amount.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.max_discount_amount.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{ form.valid_from.id_for_label }}">Valid From</label>
+                                            {{ form.valid_from }}
+                                            {% if form.valid_from.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.valid_from.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="{{ form.valid_to.id_for_label }}">Valid To</label>
+                                            {{ form.valid_to }}
+                                            {% if form.valid_to.errors %}
+                                            <div class="error-message">
+                                                {% for error in form.valid_to.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                        <a href="{% url 'coupon_list' %}" class="btn btn-secondary">Cancel</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'adminuser/vendors/js/vendor.bundle.base.js' %}"></script>
+</body>
+
+</html>

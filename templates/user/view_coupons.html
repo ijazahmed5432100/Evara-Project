@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--=============== FLATICON ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+
+
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'adminuser/img/order.png' %}">
+
+    
+    <!--=============== SWIPER CSS ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+      <!-- External CSS (e.g., Bootstrap) -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <title>Ecommerce Website</title>
+  </head>
+  <body>
+    <!--=============== HEADER ===============-->
+    
+    {% include 'header.html' %}
+
+
+
+
+<style>
+    .nav-link {
+        color: #2c3e50;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        text-align: left;
+        width: 100%;
+    }
+    
+    /* Ensure the icon and text are properly aligned */
+    .nav-link i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    /* Make the sidebar container full width within its column */
+    .sidebar {
+        position: sticky;
+        top: 20px;
+        width: 100%;
+    }
+    
+    /* Ensure the flex-column class works properly */
+    .nav.flex-column {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #088178;
+        /* padding-left: 25px; */
+    }
+
+    .nav-link.active {
+        background-color: #edf7f7;
+        color: #088178;
+    }
+
+    .nav-link i {
+        margin-right: 10px;
+    }
+
+    .logout-link {
+        color: #dc3545;
+    }
+
+    .logout-link:hover {
+        background-color: #fff5f5;
+        color: #dc3545;
+    }
+
+    .coupon-card {
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        height: 200px;
+        position: relative;
+        transition: transform 0.3s;
+        margin-bottom: 25px;
+        border-left: 5px solid #088178;
+    }
+
+    .coupon-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .coupon-card.used {
+        border-left: 5px solid #dc3545;
+        background-color: #f8f9fa;
+        opacity: 0.8;
+    }
+
+    .coupon-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-bottom: 1px dashed #e0e0e0;
+        position: relative;
+    }
+
+    .coupon-code {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #088178;
+        margin: 0;
+        display: inline-block;
+    }
+
+    .coupon-card.used .coupon-code {
+        color: #6c757d;
+    }
+
+    .badge-used {
+        background-color: #dc3545;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .coupon-body {
+        padding: 15px;
+        display: flex;
+    }
+
+    .coupon-left,
+    .coupon-right {
+        width: 50%;
+    }
+
+    .coupon-left {
+        padding-right: 10px;
+        border-right: 1px dashed #e0e0e0;
+    }
+
+    .coupon-right {
+        padding-left: 10px;
+    }
+
+    .coupon-description {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        color: #555;
+        max-height: 40px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        white-space: nowrap;
+    }
+
+    .coupon-detail {
+        display: flex;
+        margin-bottom: 6px;
+        font-size: 0.85rem;
+    }
+
+    .detail-label {
+        width: 100px;
+        font-weight: 600;
+        color: #444;
+    }
+
+    .detail-value {
+        color: #666;
+    }
+
+    .coupon-footer {
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+        border-top: 1px dashed #e0e0e0;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .copy-btn {
+        background-color: #088178;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+    }
+
+    .copy-btn:hover {
+        background-color: #066660;
+    }
+
+    .copy-btn i {
+        margin-right: 5px;
+    }
+
+    .copy-success {
+        background-color: #22c55e !important;
+    }
+
+    @media (max-width: 991px) {
+        .sidebar {
+            position: static;
+            margin-bottom: 30px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .coupon-body {
+            flex-direction: column;
+        }
+
+        .coupon-left,
+        .coupon-right {
+            width: 100%;
+            padding: 0;
+        }
+
+        .coupon-left {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-right: none;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .coupon-card {
+            height: 260px;
+        }
+    }
+</style>
+
+
+<!-- Breadcrumb -->
+<section class="breadcrumb" >
+    <ul class="breadcrumb__list flex container">
+      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">Coupons</span></li>
+      
+    </ul>
+  </section>
+
+
+
+
+<div class="container my-4">
+    
+    
+    
+
+    <div class="row mt-4">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <div class="bg-white rounded p-4">
+                    <nav class="nav">
+                        <a class="nav-link" href="{% url 'user_profile' %}">
+                            <i class="bi bi-person"></i> My Profile
+                        </a>
+                        <a class="nav-link" href="{% url 'addresses' %}">
+                            <i class="bi bi-geo-alt"></i> My Addresses
+                        </a>
+                        <a class="nav-link" href="{% url 'user_orders' %}">
+                            <i class="bi bi-box"></i> My Orders
+                        </a>
+                        <a class="nav-link" href="{% url 'wallet_view' %}">
+                            <i class="bi bi-wallet"></i> Wallet
+                        </a>
+                        <a class="nav-link active" href="{% url 'view_coupons' %}">
+                            <i class="bi bi-ticket-perforated"></i> Coupons
+                        </a>
+                        <a class="nav-link logout-link" href="{% url 'userlogout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="bg-white rounded p-4">
+                <h4 class="mb-4">Available Coupons</h4>
+
+                {% if coupon_list %}
+                <div class="row">
+                    {% for coupon_data in coupon_list %}
+                    <div class="col-md-6">
+                        <div class="coupon-card {% if coupon_data.is_used %}used{% endif %}">
+                            <div class="coupon-header">
+                                <h5 class="coupon-code">{{ coupon_data.coupon.coupon_code }}</h5>
+                                {% if coupon_data.is_used %}
+                                <span class="badge-used">Used</span>
+                                {% endif %}
+                            </div>
+                            <div class="coupon-body">
+                                <div class="coupon-left">
+                                    <p class="coupon-description" title="{{ coupon_data.coupon.description }}">{{ coupon_data.coupon.description }}</p>
+                                    <div class="coupon-detail">
+                                        <span class="detail-label">Min. Purchase:</span>
+                                        <span class="detail-value">₹{{ coupon_data.coupon.minimum_purchase_amount }}</span>
+                                    </div>
+                                    <div class="coupon-detail">
+                                        <span class="detail-label">Discount:</span>
+                                        <span class="detail-value">{{ coupon_data.coupon.discount_percentage }}%</span>
+                                    </div>
+                                </div>
+                                <div class="coupon-right">
+                                    <div class="coupon-detail">
+                                        <span class="detail-label">Max Discount:</span>
+                                        <span class="detail-value">₹{{ coupon_data.coupon.max_discount_amount }}</span>
+                                    </div>
+                                    <div class="coupon-detail">
+                                        <span class="detail-label">Validity:</span>
+                                        <span class="detail-value">
+                                            {{ coupon_data.coupon.valid_from|date:"d M Y" }} -
+                                            {{ coupon_data.coupon.valid_to|date:"d M Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="coupon-footer">
+                                {% if not coupon_data.is_used %}
+                                <button class="copy-btn" data-code="{{ coupon_data.coupon.coupon_code }}">
+                                    <i class="bi bi-clipboard"></i> Copy Code
+                                </button>
+                                {% else %}
+                                <button class="copy-btn" disabled style="background-color: #6c757d;">
+                                    <i class="bi bi-clipboard"></i> Used
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-ticket-perforated" style="font-size: 3rem; color: #d1d5db;"></i>
+                    <p class="mt-3 text-muted">No coupons available at the moment.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.querySelectorAll('.copy-btn:not([disabled])').forEach(button => {
+        button.addEventListener('click', function () {
+            const couponCode = this.getAttribute('data-code');
+            navigator.clipboard.writeText(couponCode)
+                .then(() => {
+
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+                    this.classList.add('copy-success');
+
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('copy-success');
+                    }, 1500);
+                })
+                .catch(() => {
+                    alert('Failed to copy coupon code. Please try again.');
+                });
+        });
+    });
+</script>
