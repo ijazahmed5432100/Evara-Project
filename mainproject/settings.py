@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import os
+from decouple import config
 from pathlib import Path
 
 # Load environment variables from .env
@@ -133,16 +134,19 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID') 
-SOCIAL_AUTH_GOOGLE_SECRET = os.getenv('GOOGLE_CLIENT_SECRET') 
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_SECRET = config('GOOGLE_CLIENT_SECRET')
 
 
 
 
 
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
 
-RAZORPAY_KEY_ID = "rzp_test_uE16wbUery9QQP"
-RAZORPAY_KEY_SECRET = "lxeIJBCiS8GqBe3l4s5GYweQ"
+
+
+
 
 
 
