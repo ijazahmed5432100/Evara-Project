@@ -5,6 +5,8 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from products.models import Product
 from category.models import Category
+from django.views.decorators.cache import never_cache
+from functools import wraps
 
 
 
@@ -25,9 +27,27 @@ def is_admin(user):
 
 
 
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  # your admin login page route name
+        if not request.user.is_staff:  # or use a custom user check like user.role == 'admin'
+            return redirect('admin_login')  # or maybe a "permission denied" page
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+
+
+
+
+
 """
 OFFER MANAGEMENT 
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
 def offer_management(request):
     return render(request, 'admin/offer_management.html')
@@ -38,7 +58,9 @@ def offer_management(request):
 """
 PRODUCT OFFER LISTING 
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def product_offer_list(request):
     query = request.GET.get('q')
     product_offers_list = ProductOffer.objects.all()
@@ -55,7 +77,9 @@ def product_offer_list(request):
 """
 ADD PRODUCT OFFER
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def add_product_offer(request, product_id=None):
     products = Product.objects.all()
     if request.method == 'POST':
@@ -111,7 +135,9 @@ def add_product_offer(request, product_id=None):
 """
 EDIT PRODUCT OFFER
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def edit_product_offer(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product_offer = get_object_or_404(ProductOffer, product=product)
@@ -175,7 +201,9 @@ def edit_product_offer(request, product_id):
 """
 PRODUCT OFFER ACTIVATIOIN/DEACTIVATION
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def toggle_product_offer(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product_offer = get_object_or_404(ProductOffer, product=product)
@@ -192,7 +220,9 @@ def toggle_product_offer(request, product_id):
 """
 ADD CATEGORY OFFER
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def add_category_offer(request, category_id=None):
     categories = Category.objects.all()
     if request.method == 'POST':
@@ -266,7 +296,9 @@ def add_category_offer(request, category_id=None):
 """
 CATEGORY OFFER LISTING
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def category_offer_list(request):
     query = request.GET.get('q')
     category_offers_list = CategoryOffer.objects.all()
@@ -286,7 +318,9 @@ def category_offer_list(request):
 """
 EDIT CATEGORY OFFER
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def edit_category_offer(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     category_offer = get_object_or_404(CategoryOffer, category=category)
@@ -349,7 +383,9 @@ def edit_category_offer(request, category_id):
 """
 CATEGORY OFFER ACTIVATE/DEACTIVATE
 """
-@user_passes_test(lambda u: u.is_superuser)
+@admin_required
+@never_cache
+@user_passes_test(is_admin)
 def toggle_category_offer(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     category_offer = get_object_or_404(CategoryOffer, category=category)

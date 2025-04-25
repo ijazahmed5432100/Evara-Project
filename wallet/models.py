@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from orders.models import Order
+import uuid
 
 # Create your models here.
 
@@ -27,6 +28,7 @@ class WalletTransaction(models.Model):
     transaction_type = models.CharField(max_length=10, choices=[('credit', 'Credit'), ('debit', 'Debit')])
     description = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    transaction_id = models.CharField(max_length=36, unique=True, default=uuid.uuid4, editable=False)
 
     def __str__(self):
         return f"{self.transaction_type} of {self.amount} for {self.wallet.user.username}"

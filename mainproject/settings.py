@@ -12,9 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-import os
-from decouple import config
+from dotenv import load_dotenv # type: ignore
 from pathlib import Path
 
 # Load environment variables from .env
@@ -28,13 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m%$o8jd5+)e%$chg2bao)8f4^u3e8w9mq&fvlo70z$4evue#h@'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
+# DEBUG = os.getenv('DEBUG', 'True') == 'True' 
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')  
 
 # Application definition
 
@@ -62,8 +63,7 @@ INSTALLED_APPS = [
     'payments',
     'offers',
     'coupons',
-
-
+    'reviews',
 
     # Required for allauth
     'django.contrib.sites',  
@@ -74,16 +74,8 @@ INSTALLED_APPS = [
 ]
 
 
-
-
-
 # Required for Django-Allauth
 SITE_ID = 1
-
-
-
-
-
 
 
 AUTHENTICATION_BACKENDS = [
@@ -91,68 +83,36 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  # Django-Allauth
 ]
 
-
-
-
-
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
-
-
-
-
-# ACCOUNT_AUTHENTICATION_METHOD = "email"  # Instead of ACCOUNT_LOGIN_METHODS
-# ACCOUNT_SIGNUP_FIELDS = ["email", "password1", "password2"]
-# ACCOUNT_EMAIL_VERIFICATION = "none"
-
-
-
-
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
-
-
-
-
-
 
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': '260233505387-8okqklof253gf5cqtqnkfqciv1576i3r.apps.googleusercontent.com',
-            'secret': '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',
-            'key': ''
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key': '',
         },
-        'SCOPE': ['profile', 'email',],
-        'AUTH_PARAMS': {'access_type': 'online',}
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
     }
 }
 
 
-SOCIAL_AUTH_GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
-SOCIAL_AUTH_GOOGLE_SECRET = config('GOOGLE_CLIENT_SECRET')
+
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
 
 
-
-
-
-RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
-RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
-
-
-
-
-
-
-
-
-
-
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -194,11 +154,11 @@ WSGI_APPLICATION = 'mainproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'zayrah_database',
-        'USER': 'ijazahmed',
-        'PASSWORD': 'ijazahmed1234',
-        'HOST': 'localhost',  # or your server IP
-        'PORT': '5432',  # Default PostgreSQL port
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -253,11 +213,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider's SMTP
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ijazahmed5432100@gmail.com'
-EMAIL_HOST_PASSWORD = 'xgpp ljnd hmni agmi'  # Use an App Password, not your real password
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
+CONTACT_EMAIL = os.getenv('EMAIL_HOST_USER') 
 
 
 

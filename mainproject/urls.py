@@ -37,6 +37,8 @@ urlpatterns = [
     path('payments/', include('payments.urls')),
     path('coupons/', include('coupons.urls')),
     path('offers/', include('offers.urls')),
+    path('review/', include('reviews.urls')),
+    path('login/', include('registration.urls')),
     
     
 ]

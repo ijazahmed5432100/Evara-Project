@@ -6,6 +6,7 @@ from admin_side.views import is_admin
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.views.decorators.cache import never_cache
+from functools import wraps
 
 
 
@@ -16,9 +17,27 @@ from django.views.decorators.cache import never_cache
 
 
 
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  # your admin login page route name
+        if not request.user.is_staff:  # or use a custom user check like user.role == 'admin'
+            return redirect('admin_login')  # or maybe a "permission denied" page
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+
+
+
+
 """
 CATEGORY MANAGEMENT
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def category_management(request):
@@ -70,6 +89,7 @@ def category_management(request):
 """
 EDIT CATEGORY
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def edit_category(request, category_id):
@@ -101,7 +121,9 @@ def edit_category(request, category_id):
 """
 CATEGORY ACTIVATE/DEACTIVATE
 """
+@admin_required
 @never_cache
+@user_passes_test(is_admin)
 def toggle_listing(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     category.is_listed = not category.is_listed

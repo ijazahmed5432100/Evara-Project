@@ -306,8 +306,8 @@
 
 
 
-  <div class="evara-row">
-    <!-- Search Section -->
+  <!-- <div class="evara-row">
+     Search Section 
     <div class="evara-col evara-col-lg-3">
         <h3 class="evara-search-heading">Search Products</h3>
         <form method="GET" class="evara-search-form">
@@ -320,107 +320,71 @@
                 </button>
             </div>
         </form>
-    </div>
-
-    <!-- <div class="evara-col evara-col-lg-1">
-        <div class="evara-divider"></div>
     </div> -->
 
-   <!-- Filter Section -->
-<div class="evara-col evara-col-lg-3" style=" background: #ffffff; border-radius: 8px; box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1); margin-left:35px ">
-  <h4 class="evara-filter-heading" style="margin-bottom: 10px; font-size: 18px; font-weight: bold; color: #333;">Filter by Category</h4>
-  <form method="GET">
-      <input type="hidden" name="search" value="{{ search_query }}">
-      <input type="hidden" name="sort" value="{{ sort_option }}">
 
-      <div class="evara-dropdown-wrapper" style="width: 100%; margin-bottom: 10px;">
-          <select name="categories" class="evara-dropdown" onchange="this.form.submit()" 
-              style="width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #ccc; border-radius: 5px; background: #fff; font-size: 16px; color: #808080; cursor: pointer; height: 38px; padding: 8px 15px; ">
-              <option value="">All Categories</option>
-              {% for category in categories %}
-              <option value="{{ category.id }}" {% if category.id in selected_categories %}selected{% endif %}>
-                  {{ category.category_name }}
-              </option>
-              {% endfor %}
-          </select>
+    <!-- Single Form for All Filters -->
+    <form method="GET" id="filter-form">
+      <div class="evara-row">
+          <!-- Search Section -->
+          <div class="evara-col evara-col-lg-3">
+              <h3 class="evara-search-heading">Search Products</h3>
+              <div class="evara-input-wrapper">
+                  <input type="text" class="evara-search-input" name="search" value="{{ search_query }}" placeholder="Search products...">
+                  <button class="evara-search-button" type="submit">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      </svg>
+                  </button>
+              </div>
+          </div>
+
+          <!-- Filter by Category -->
+          <div class="evara-col evara-col-lg-3" style="background: #ffffff; border-radius: 8px; box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1); margin-left: 35px">
+              <h4 class="evara-filter-heading" style="margin-bottom: 10px; font-size: 18px; font-weight: bold; color: #333;">Filter by Category</h4>
+              <div class="evara-dropdown-wrapper" style="width: 100%; margin-bottom: 10px;">
+                  <select name="categories" class="evara-dropdown" onchange="document.getElementById('filter-form').submit()" 
+                      style="width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #ccc; border-radius: 5px; background: #fff; font-size: 16px; color: #808080; cursor: pointer; height: 38px; padding: 8px 15px;">
+                      <option value="">All Categories</option>
+                      {% for category in categories %}
+                      <option value="{{ category.id }}" {% if category.id in selected_categories %}selected{% endif %}>
+                          {{ category.category_name }}
+                      </option>
+                      {% endfor %}
+                  </select>
+              </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="evara-col evara-col-lg-3" style="background: #ffffff; border-radius: 8px; box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1); margin-left: 35px">
+              <h4 class="evara-filter-heading" style="margin-bottom: 10px; font-size: 18px; font-weight: bold; color: #333;">Filter by Price</h4>
+              <div class="evara-input-group" style="display: flex; gap: 10px; align-items: center;">
+                  <input type="number" name="min_price" value="{{ min_price }}" placeholder="Min Price" 
+                      style="width: 50%; margin-top: 4px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; color: #333; height: 38px; padding: 8px 15px;">
+                  <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max Price" 
+                      style="width: 50%; margin-top: 4px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; color: #333; height: 38px; padding: 8px 15px;">
+              </div>
+          </div>
+
+          <!-- Sort Section -->
+          <div class="evara-col evara-col-lg-2" style="margin-left: 35px">
+              <h4 class="evara-filter-heading">Sort By</h4>
+              <select name="sort" class="evara-sort-select" onchange="document.getElementById('filter-form').submit()" style="margin-top: 16px; height: 38px; padding: 8px 15px; color: #808080;">
+                  <option value="name-asc" {% if sort_option == "name-asc" %}selected{% endif %}>Name: A to Z</option>
+                  <option value="name-desc" {% if sort_option == "name-desc" %}selected{% endif %}>Name: Z to A</option>
+                  <option value="price-asc" {% if sort_option == "price-asc" %}selected{% endif %}>Price: Low to High</option>
+                  <option value="price-desc" {% if sort_option == "price-desc" %}selected{% endif %}>Price: High to Low</option>
+              </select>
+          </div>
+
+          <!-- Buttons Section -->
+          <div class="evara-col evara-col-lg-2 evara-text-end" style="margin-left: 43%;">
+              <button type="submit" class="evara-button evara-apply-button filter-btn">Apply Filters</button>
+                <button type="button" class="evara-button evara-clear-button clear-filters-btn" onclick="clearFilters()">Clear All Filters</button>
+          </div>
       </div>
   </form>
 </div>
-
-
-
-
-
-
-
-
-
-<!-- Price Range Filter -->
-<div class="evara-col evara-col-lg-3" style="background: #ffffff; border-radius: 8px; box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1); margin-left:35px ">
-  <h4 class="evara-filter-heading" style="margin-bottom: 10px; font-size: 18px; font-weight: bold; color: #333;">Filter by Price</h4>
-  
-  <form method="GET">
-      <input type="hidden" name="search" value="{{ search_query }}">
-      <input type="hidden" name="sort" value="{{ sort_option }}">
-      {% for category in selected_categories %}
-      <input type="hidden" name="categories" value="{{ category }}">
-      {% endfor %}
-
-      <!-- Price Inputs -->
-      <div class="evara-input-group" style="display: flex; gap: 10px; align-items: center;" >
-          <input type="number" name="min_price" value="{{ min_price }}" placeholder="Min Price" 
-              style="width: 50%; margin-top: 4px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; color: #333; height: 38px; padding: 8px 15px; ">
-          <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max Price" 
-              style=" width: 50%; margin-top: 4px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; color: #333; height: 38px; padding: 8px 15px; ">
-      </div>
-
-      <!-- Apply Button -->
-      <button class="evara-button evara-apply-button filter-btn" type="submit" 
-          style="margin-top: 12px; margin-left: 40%; width: 20%; height: 30px; background: #007bff; color: #fff; border: none; padding: 5px; border-radius: 6px; cursor: pointer; font-weight: bold; ">
-          Apply
-      </button>
-  </form>
-</div>
-
-
-
-
-
-
-
-
-
-    <!-- <div class="evara-col evara-col-lg-1">
-        <div class="evara-divider"></div>
-    </div> -->
-
-    <!-- Sort Section -->
-    <div class="evara-col evara-col-lg-2" style="margin-left:35px" >
-        <h4 class="evara-filter-heading">Sort By</h4>
-        <input type="hidden" name="search" value="{{ search_query }}">
-        {% for category in selected_categories %}
-        <input type="hidden" name="categories" value="{{ category }}">
-        {% endfor %}
-        <select name="sort" class="evara-sort-select" onchange="this.form.submit() " style="margin-top: 16px; height: 38px; padding: 8px 15px; color: #808080; " >
-            <option value="name-asc" {% if sort_option == "name-asc" %}selected{% endif %}>Name: A to Z</option>
-            <option value="name-desc" {% if sort_option == "name-desc" %}selected{% endif %}>Name: Z to A</option>
-            <option value="price-asc" {% if sort_option == "price-asc" %}selected{% endif %}>Price: Low to High</option>
-            <option value="price-desc" {% if sort_option == "price-desc" %}selected{% endif %}>Price: High to Low</option>
-        </select>
-    </div>
-
-    <!-- Buttons Section -->
-    <div class="evara-col evara-col-lg-2 evara-text-end" style="margin-left: 43%;"  >
-        <button class="evara-button evara-apply-button filter-btn" type="submit">Apply Filters</button>
-        </form> <!-- Closing the main filter form properly -->
-
-        <form method="GET">
-            <button type="submit" class="evara-button evara-clear-button clear-filters-btn">Clear All Filters</button>
-        </form>
-    </div>
-</div>
-</div>
-
 
 
 
@@ -459,10 +423,19 @@
       <section class="products container section--lg">
         <!-- <p class="total__products">We found <span>688</span> items for you!</p> -->
         <div class="products__container grid">
+
+          {% if page_obj.paginator.count == 0 or page_obj.object_list|length == 0 %}
+          <div class="no-products-message">
+            <i class="bi bi-box-seam no-products-icon"></i>
+            <p>No products found matching your search or filters. Please try a different search term or adjust your filters.</p>
+            <a href="{% url 'all_products' %}" class="btn btn-outline-primary mt-3">Reset and Browse All</a>
+          </div>
+          {% else %}
+
           {% for item in products %}
           <div class="product__item">
             <div class="product__banner">
-              <a href="details.html" class="product__images">
+              <a href="#" class="product__images">
                 <img
                 src="{{ item.first_image.image.url }}"       
                   alt="{{item.product.name}}"
@@ -489,23 +462,28 @@
 
                 
               </div>
-              <div class="product__badge light-pink">Hot</div>
+              {% if item.product.has_offer %}
+              <div class="product__badge light-pink">{{ item.product.best_offer_percentage }}% OFF</div>
+              {% endif %}
             </div>
             <div class="product__content">
               <span class="product__category">Clothing</span>
-              <a href="details.html">
+              <a href="#">
                 <h3 class="product__title">{{item.product.name}}</h3>
               </a>
               <div class="product__rating">
-                <i class="fi fi-rs-star"></i>
-                <i class="fi fi-rs-star"></i>
-                <i class="fi fi-rs-star"></i>
-                <i class="fi fi-rs-star"></i>
-                <i class="fi fi-rs-star"></i>
+                {% for i in "12345" %}
+                  <span
+                  class="star {% if i <= item.product.average_rating|floatformat:0 %}filled{% else %}empty{% endif %}">&#9733;</span>
+                {% endfor %}
               </div>
               <div class="product__price flex">
+                {% if item.product.has_offer %}
+                <span class="new__price">{{ item.product.best_offer_price|floatformat:2 }}</span>
+                <span class="old__price">{{item.product.price | floatformat:2}}</span>
+                {% else %}
                 <span class="new__price">{{item.product.price | floatformat:2}}</span>
-                <span class="old__price">2000</span>
+                {% endif %}
               </div>
               <!-- <a
                 href=""
@@ -517,6 +495,7 @@
             </div>
           </div>
           {% endfor %}
+          {% endif %} 
          
 
 
@@ -581,48 +560,48 @@
 
 
         {% if page_obj.paginator.count > 0 %}
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-            <li>
-                <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}" 
-                    class="pagination__link icon">
-                    <i class="fi-rs-angle-double-small-left"></i>
-                </a>
-            </li>
-            {% endif %}
-        
-            {% for num in page_obj.paginator.page_range %}
-                {% if num == page_obj.number %}
-                    <li><a href="#" class="pagination__link active">{{ num|stringformat:"02d" }}</a></li>
-                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-                    <li>
-                        <a href="?page={{ num }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}" 
-                            class="pagination__link">
-                            {{ num|stringformat:"02d" }}
-                        </a>
-                    </li>
-                {% elif num == 1 or num == page_obj.paginator.num_pages %}
-                    <li>
-                        <a href="?page={{ num }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}" 
-                            class="pagination__link">
-                            {{ num }}
-                        </a>
-                    </li>
-                {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
-                    <li><a href="#" class="pagination__link">...</a></li>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li>
+                    <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+                        class="pagination__link icon">
+                        <i class="fi-rs-angle-double-small-left"></i>
+                    </a>
+                </li>
                 {% endif %}
-            {% endfor %}
-        
-            {% if page_obj.has_next %}
-            <li>
-                <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}" 
-                    class="pagination__link icon">
-                    <i class="fi-rs-angle-double-small-right"></i>
-                </a>
-            </li>
+            
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <li><a href="#" class="pagination__link active">{{ num|stringformat:"02d" }}</a></li>
+                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                        <li>
+                            <a href="?page={{ num }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+                                class="pagination__link">
+                                {{ num|stringformat:"02d" }}
+                            </a>
+                        </li>
+                    {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                        <li>
+                            <a href="?page={{ num }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+                                class="pagination__link">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                        <li><a href="#" class="pagination__link">...</a></li>
+                    {% endif %}
+                {% endfor %}
+            
+                {% if page_obj.has_next %}
+                <li>
+                    <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&sort={{ sort_option }}{% for category in selected_categories %}&categories={{ category }}{% endfor %}&min_price={{ min_price }}&max_price={{ max_price }}" 
+                        class="pagination__link icon">
+                        <i class="fi-rs-angle-double-small-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
             {% endif %}
-        </ul>
-        {% endif %}
         
         </section>
         
@@ -646,16 +625,43 @@
 
         <script>
           document.addEventListener("DOMContentLoaded", function() {
-              let minPriceInput = document.querySelector("input[name='min_price']");
-              let maxPriceInput = document.querySelector("input[name='max_price']");
-              
-              [minPriceInput, maxPriceInput].forEach(input => {
-                  input.addEventListener("change", function() {
-                      this.form.submit();  // Auto-submit form on input change
-                  });
-              });
-          });
+            let minPriceInput = document.querySelector("input[name='min_price']");
+            let maxPriceInput = document.querySelector("input[name='max_price']");
 
+            // Prevent auto-submit on price input change
+            [minPriceInput, maxPriceInput].forEach(input => {
+                input.addEventListener("change", function(e) {
+                    e.preventDefault(); // Prevent form submission
+                    // Optionally, you can add validation or UI feedback here
+                });
+            });
+
+            // Trigger form submission only with the main Apply Filters button
+            document.querySelector('.filter-btn').addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default form submission
+                document.getElementById('filter-form').submit(); // Submit the main form
+            });
+        });
+
+
+
+
+
+
+        
+
+        // Clear all filters function (moved outside DOMContentLoaded)
+        function clearFilters() {
+          // Reset input fields
+          document.querySelector("input[name='search']").value = "";
+          document.querySelector("input[name='min_price']").value = "";
+          document.querySelector("input[name='max_price']").value = "";
+          document.querySelector("select[name='categories']").value = "";
+          document.querySelector("select[name='sort']").value = "";
+
+          // Submit the form to clear filters
+          document.getElementById('filter-form').submit();
+      }
 
 
 

@@ -2,6 +2,9 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+<!--=============== CSS ===============-->
+<link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
 
 
 <!-- CSS -->
@@ -74,16 +77,16 @@
       
 
     <nav class="nav container">
-      <a href="index.html" class="nav__logo">
+      <a href="{% url 'home' %}" class="nav__logo">
         <img
           class="nav__logo-img"
-          src="{% static 'assets/img/logo.svg' %}"
+          src="{% static 'assets/img/jamilah.png' %}"
           alt="website logo"
         />
       </a>
       <div class="nav__menu" id="nav-menu">
         <div class="nav__menu-top">
-          <a href="index.html" class="nav__menu-logo">
+          <a href="{% url 'home' %}" class="nav__menu-logo">
             <img src="{% static 'assets/img/logo.svg' %}" alt="">
           </a>
           <div class="nav__close" id="nav-close">
@@ -92,7 +95,7 @@
         </div>
         <ul class="nav__list">
           <li class="nav__item">
-            <a href="{% url 'home' %}" class="nav__link active-link">Home</a>
+            <a href="{% url 'home' %}" class="nav__link ">Home</a>
           </li>
           <li class="nav__item">
             <a href="{% url 'all_products' %}" class="nav__link">Shop</a>
@@ -101,22 +104,30 @@
             <a href="{% url 'user_profile' %}" class="nav__link">My Account</a>
           </li>
           <li class="nav__item">
-            <a href="#" class="nav__link">Contact</a>
+            <a href="{% url 'contact' %}" class="nav__link">Contact</a>
           </li>
           <li class="nav__item">
-            <a href="#" class="nav__link">About</a>
+            <a href="{% url 'about' %}" class="nav__link">About</a>
           </li>
         </ul>
+
+
         <div class="header__search">
-          <input
-            type="text"
-            placeholder="Search For Items..."
-            class="form__input"
-          />
-          <button class="search__btn">
-            <img src="{% static 'assets/img/search.png' %}" alt="search icon" />
-          </button>
-        </div>
+          <form method="GET" action="{% url 'all_products' %}" class="search-form">
+              <input
+                  type="text"
+                  name="search"
+                  placeholder="Search For Items..."
+                  class="form__input"
+                  id="search-input"
+              />
+              <button type="submit" class="search__btn">
+                  <img src="{% static 'assets/img/search.png' %}" alt="search icon" />
+              </button>
+          </form>
+      </div>
+
+
       </div>
       <div class="header__user-actions">
         <a href="{% url 'wishlist' %}" class="header__action-btn" title="Wishlist">

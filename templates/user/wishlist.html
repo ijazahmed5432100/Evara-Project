@@ -20,6 +20,8 @@
     <!--=============== CSS ===============-->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />   
 
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
     <title>Ecommerce Website</title>
   </head>
   <body>
@@ -174,7 +176,7 @@
                   <span class="table__price">₹{{ item.product.price }}</span>
                 </td>
                 <!-- <td><span class="table__stock">{% if item.product.stock > 0 %}In Stock{% else %}Out of Stock{% endif %} </span></td> -->
-                <td><span class="table__stock">In Stock</span></td>
+                <td><span class="table__stock">{% if item.is_in_stock %}In Stock{% else %}Out of Stock{% endif %}</span></td>
                 <td> <a href="{% url 'move_to_cart' item.id %}" > <button class="btn btn--sm move-to-cart">Add to Cart</button></td> </a>
                 {% csrf_token %}
 
@@ -258,8 +260,11 @@
     
     
     function getCSRFToken() {
-      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]");
-      return csrfToken ? csrfToken.value : "";
+      let token = document.querySelector("[name=csrf-token]")?.content;
+      if (!token) {
+          console.error("CSRF token not found!");
+      }
+      return token;
   }
 
 

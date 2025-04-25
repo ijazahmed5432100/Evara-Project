@@ -21,6 +21,10 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
     <title>Ecommerce Website</title>
+
+
+
+    <meta name="csrf-token" content="{{ csrf_token }}">
     
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -31,7 +35,7 @@
 
  
 
-
+  
 
 
 
@@ -148,7 +152,7 @@ cursor: pointer;
             <p class="home__description">
               Save more with coupons & up to 20% off
             </p>
-            <a href="shop.html" class="btn">Shop Now</a>
+            <a href="{% url 'all_products' %}" class="btn">Shop Now</a>
           </div>
           <img src="" class="home__img" alt="" />
         </div>
@@ -219,14 +223,19 @@ cursor: pointer;
                     <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
                       <i class="fi fi-rs-eye"></i>
                     </a>
-                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                    <a href="#" 
+                      onclick="event.preventDefault(); addToWishlist({{ product.id }})"
+                      class="action__btn"
+                      aria-label="Add to Wishlist">
                       <i class="fi fi-rs-heart"></i>
                     </a>
                     <!-- <a href="#" class="action__btn" aria-label="Compare">
                       <i class="fi fi-rs-shuffle"></i>
                     </a> -->
                   </div>
-                  <div class="product__badge light-pink">Hot</div>
+                  {% if product.has_offer %}
+                  <div class="product__badge light-pink">{{ product.best_offer_percentage }}% OFF</div>
+                  {% endif %}
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
@@ -234,19 +243,21 @@ cursor: pointer;
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
+                    {% for i in "12345" %}
+                     <span class="star {% if i <= product.average_rating|floatformat:0 %}filled{% else %}empty{% endif %}">&#9733;</span>
+                    {% endfor %}       
                   </div>
                   <div class="product__price flex">
-                    <span class="new__price">{{ product.price | floatformat:2 }}</span>
-                    <span class="old__price">2000</span>
+                    {% if product.has_offer %}
+                    <span class="new__price">₹{{ product.best_offer_price|floatformat:2 }}</span>
+                    <span class="old__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% else %}
+                    <span class="new__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% endif %}
                   </div>
-                  <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                  <!-- <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
                     <i class="fi fi-rs-shopping-bag-add"></i>
-                  </a>
+                  </a> -->
                 </div>
               </div>
               {% endfor %}
@@ -263,31 +274,37 @@ cursor: pointer;
               <div class="product__item">
                 <div class="product__banner">
                   <a href="details.html" class="product__images">
-                    
+                    {% if product.images.first %}
                     <img
                       src="{{product.images.first.image.url}}"
                       alt="{{product.name}}"
                       class="product__img default"
                     />
+                    
                     <img
                       src="{{product.images.first.image.url}}"
                       alt="{{product.name}}"
                       class="product__img hover"
                     />
-                    
+                    {% endif %}
                   </a>
                   <div class="product__actions">
                     <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
                       <i class="fi fi-rs-eye"></i>
                     </a>
-                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                    <a href="#" 
+                      onclick="event.preventDefault(); addToWishlist({{ product.id }})"
+                      class="action__btn"
+                      aria-label="Add to Wishlist">
                       <i class="fi fi-rs-heart"></i>
                     </a>
                     <!-- <a href="#" class="action__btn" aria-label="Compare">
                       <i class="fi fi-rs-shuffle"></i>
                     </a> -->
                   </div>
-                  <div class="product__badge light-pink">Hot</div>
+                  {% if product.has_offer %}
+                  <div class="product__badge light-pink">{{ product.best_offer_percentage }}% OFF</div>
+                  {% endif %}
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
@@ -295,19 +312,21 @@ cursor: pointer;
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
+                    {% for i in "12345" %}
+                     <span class="star {% if i <= product.average_rating|floatformat:0 %}filled{% else %}empty{% endif %}">&#9733;</span>
+                    {% endfor %}       
                   </div>
                   <div class="product__price flex">
-                    <span class="new__price">{{ product.price | floatformat:2 }}</span>
-                    <span class="old__price">2000</span>
+                    {% if product.has_offer %}
+                    <span class="new__price">₹{{ product.best_offer_price|floatformat:2 }}</span>
+                    <span class="old__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% else %}
+                    <span class="new__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% endif %}
                   </div>
-                  <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                  <!-- <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
                     <i class="fi fi-rs-shopping-bag-add"></i>
-                  </a>
+                  </a> -->
                 </div>
               </div>
               {% endfor %}
@@ -325,29 +344,37 @@ cursor: pointer;
               <div class="product__item">
                 <div class="product__banner">
                   <a href="details.html" class="product__images">
+                    {% if product.images.first %}
                     <img
                       src="{{product.images.first.image.url}}"
                       alt="{{product.name}}"
                       class="product__img default"
                     />
+                    
                     <img
                       src="{{product.images.first.image.url}}"
                       alt="{{product.name}}"
                       class="product__img hover"
                     />
+                    {% endif %}
                   </a>
                   <div class="product__actions">
                     <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
                       <i class="fi fi-rs-eye"></i>
                     </a>
-                    <a href="#" class="action__btn" aria-label="Add to Wishlist">
+                    <a href="#" 
+                      onclick="event.preventDefault(); addToWishlist({{ product.id }})"
+                      class="action__btn"
+                      aria-label="Add to Wishlist">
                       <i class="fi fi-rs-heart"></i>
                     </a>
                     <!-- <a href="#" class="action__btn" aria-label="Compare">
                       <i class="fi fi-rs-shuffle"></i>
                     </a> -->
                   </div>
-                  <div class="product__badge light-pink">Hot</div>
+                  {% if product.has_offer %}
+                  <div class="product__badge light-pink">{{ product.best_offer_percentage }}% OFF</div>
+                  {% endif %}
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
@@ -355,19 +382,21 @@ cursor: pointer;
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
-                    <i class="fi fi-rs-star"></i>
+                    {% for i in "12345" %}
+                     <span class="star {% if i <= product.average_rating|floatformat:0 %}filled{% else %}empty{% endif %}">&#9733;</span>
+                    {% endfor %}       
                   </div>
                   <div class="product__price flex">
-                    <span class="new__price">{{ product.price | floatformat:2 }}</span>
-                    <span class="old__price">2000</span>
+                    {% if product.has_offer %}
+                    <span class="new__price">₹{{ product.best_offer_price|floatformat:2 }}</span>
+                    <span class="old__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% else %}
+                    <span class="new__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% endif %}
                   </div>
-                  <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                  <!-- <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
                     <i class="fi fi-rs-shopping-bag-add"></i>
-                  </a>
+                  </a> -->
                 </div>
               </div>
               {% endfor %}
@@ -394,55 +423,65 @@ cursor: pointer;
         <div class="new__container swiper">
           <div class="swiper-wrapper">
             {% for product in random_newarrival_products %}
-            <div class="product__item swiper-slide">
-              <div class="product__banner">
-                <a href="details.html" class="product__images">
-                  <img
-                    src="{{product.images.first.image.url}}"
-                    alt="{{product.name}}"
-                    class="product__img default"
-                  />
-                  <img
-                    src="{{product.images.first.image.url}}"
-                    alt="{{product.name}}"
-                    class="product__img hover"
-                  />
-                </a>
-                <div class="product__actions">
-                  <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
+              <div class="product__item">
+                <div class="product__banner">
+                  <a href="details.html" class="product__images">
+                    {% if product.images.first %}
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img default"
+                    />
+                    
+                    <img
+                      src="{{product.images.first.image.url}}"
+                      alt="{{product.name}}"
+                      class="product__img hover"
+                    />
+                    {% endif %}
                   </a>
-                  <a href="#" class="action__btn" aria-label="Add to Wishlist">
-                    <i class="fi fi-rs-heart"></i>
+                  <div class="product__actions">
+                    <a href="{% url 'product_details' product.id %}" class="action__btn" aria-label="Quick View">
+                      <i class="fi fi-rs-eye"></i>
+                    </a>
+                    <a href="#" 
+                      onclick="event.preventDefault(); addToWishlist({{ product.id }})"
+                      class="action__btn"
+                      aria-label="Add to Wishlist">
+                      <i class="fi fi-rs-heart"></i>
+                    </a>
+                    <!-- <a href="#" class="action__btn" aria-label="Compare">
+                      <i class="fi fi-rs-shuffle"></i>
+                    </a> -->
+                  </div>
+                  {% if product.has_offer %}
+                  <div class="product__badge light-pink">{{ product.best_offer_percentage }}% OFF</div>
+                  {% endif %}
+                </div>
+                <div class="product__content">
+                  <span class="product__category">{{category.category_name}}</span>
+                  <a href="details.html">
+                    <h3 class="product__title">{{product.name}}</h3>
                   </a>
-                  <!-- <a href="#" class="action__btn" aria-label="Compare">
-                    <i class="fi fi-rs-shuffle"></i>
+                  <div class="product__rating">
+                    {% for i in "12345" %}
+                     <span class="star {% if i <= product.average_rating|floatformat:0 %}filled{% else %}empty{% endif %}">&#9733;</span>
+                    {% endfor %}       
+                  </div>
+                  <div class="product__price flex">
+                    {% if product.has_offer %}
+                    <span class="new__price">₹{{ product.best_offer_price|floatformat:2 }}</span>
+                    <span class="old__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% else %}
+                    <span class="new__price">₹{{ product.price | floatformat:2 }}</span>
+                    {% endif %}
+                  </div>
+                  <!-- <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
+                    <i class="fi fi-rs-shopping-bag-add"></i>
                   </a> -->
                 </div>
-                <div class="product__badge light-pink">Hot</div>
               </div>
-              <div class="product__content">
-                <span class="product__category">{{category.category_name}}</span>
-                <a href="details.html">
-                  <h3 class="product__title">{{product.name}}</h3>
-                </a>
-                <div class="product__rating">
-                  <i class="fi fi-rs-star"></i>
-                  <i class="fi fi-rs-star"></i>
-                  <i class="fi fi-rs-star"></i>
-                  <i class="fi fi-rs-star"></i>
-                  <i class="fi fi-rs-star"></i>
-                </div>
-                <div class="product__price flex">
-                  <span class="new__price">{{product.price | floatformat:2}}</span>
-                  <span class="old__price">$2000</span>
-                </div>
-                <a href="" class="action__btn cart__btn" aria-label="Add To Cart">
-                  <i class="fi fi-rs-shopping-bag-add"></i>
-                </a>
-              </div>
-            </div>
-            {% endfor %}
+              {% endfor %}
 
 
 
@@ -482,7 +521,7 @@ cursor: pointer;
 
 
     <!--=============== NEWSLETTER ===============-->
-    <section class="newsletter section home__newsletter">
+    <!-- <section class="newsletter section home__newsletter">
       <div class="newsletter__container container grid">
         <h3 class="newsletter__title flex">
           <img
@@ -505,7 +544,7 @@ cursor: pointer;
         </form>
       </div>
     </section>
-    </main>
+    </main> -->
 
 
 
@@ -520,7 +559,7 @@ cursor: pointer;
       <div class="footer__content">
         <a href="index.html" class="footer__logo">
           <img
-            src="{% static 'assets/img/logo.svg' %}"
+            src="{% static 'assets/img/jamilah.png' %}"
             alt=""
             class="footer__logo-img"
           />
@@ -530,7 +569,7 @@ cursor: pointer;
           <span>Address:</span> 13 Tlemcen Road, Street 32, Beb-Wahren
         </p>
         <p class="footer__description">
-          <span>Phone:</span> +01 2222 365 /(+91) 01 2345 6789
+          <span>Phone:</span> (+91) 9895582131
         </p>
         <p class="footer__description">
           <span>Hours:</span> 10:00 - 18:00, Mon - Sat
@@ -608,8 +647,8 @@ cursor: pointer;
       </div>
     </div>
     <div class="footer__bottom">
-      <p class="copyright">© 2024 Evara. All right reserved</p>
-      <span class="designer">Designer by Crypticalcoder</span>
+      <p class="copyright">© 2025 Jamilah. All right reserved</p>
+      <!-- <span class="designer">Designer by Crypticalcoder</span> -->
     </div>
   </footer>
 
@@ -624,6 +663,42 @@ cursor: pointer;
 
 
     <script>
+
+
+      function addToWishlist(productId) {
+        function getCSRFToken() {
+            let token = document.querySelector("[name=csrf-token]")?.content;
+            if (!token) {
+                console.error("CSRF token not found!");
+            }
+            return token;
+        }
+    
+        fetch(`/wishlist/add/${productId}/`, {
+            method: "POST",
+            headers: { 
+                "X-CSRFToken": getCSRFToken() 
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                showNotification(data.message, "success");
+            } else {
+                showNotification(data.message, "error");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            showNotification("Error adding to wishlist", "error");
+        });
+    }
+
+
+
+
+
+
 
       function showNotification(message, type) {
         let notification = document.getElementById("notification");

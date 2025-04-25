@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.cache import never_cache
+from functools import wraps
+
 
 
 
@@ -70,6 +72,23 @@ ADMIN CHECK
 """
 def is_admin(user):
     return user.is_staff
+
+
+
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  # your admin login page route name
+        if not request.user.is_staff:  # or use a custom user check like user.role == 'admin'
+            return redirect('admin_login')  # or maybe a "permission denied" page
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+
 
 
 
@@ -500,9 +519,11 @@ def admin_login(request):
 """
 DASHBOARD
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
-@login_required(login_url='admin_login')
 def admin_dashboard(request):
+    
     # Default date range for the main dashboard (last 30 days)
     end_date = timezone.now().date()
     start_date = end_date - timedelta(days=30)
@@ -728,11 +749,23 @@ def admin_dashboard(request):
     return render(request, 'admin/dashboard.html', context)
 
 
+
+
+
+
+
+
+
+
+
+
+
 """
 SALES REPORT GENERATE
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
-@login_required(login_url='admin_login')
 def generate_sales_report(request):
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
@@ -1003,6 +1036,7 @@ def generate_sales_report(request):
 """
 ADMIN SIDE USER MANAGEMENT
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def user_manage(request):
@@ -1033,6 +1067,7 @@ def user_manage(request):
 """
 BLOCK USER
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def block_user(request,user_id):
@@ -1050,6 +1085,7 @@ def block_user(request,user_id):
 """
 UNBLOCK USER
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def unblock_user(request, user_id):
@@ -1067,8 +1103,9 @@ def unblock_user(request, user_id):
 """
 ADMIN LOGOUT
 """
+@admin_required
 @never_cache
-@login_required(login_url='admin_login') 
+@user_passes_test(is_admin)
 def admin_logout(request):
     logout(request)
     return redirect('admin_login')

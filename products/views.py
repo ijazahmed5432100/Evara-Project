@@ -14,6 +14,8 @@ from django.views.decorators.cache import never_cache
 import random
 from django.http import JsonResponse
 import json
+from reviews.models import Review
+from functools import wraps
 
 
 
@@ -26,9 +28,28 @@ import json
 
 
 
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  # your admin login page route name
+        if not request.user.is_staff:  # or use a custom user check like user.role == 'admin'
+            return redirect('admin_login')  # or maybe a "permission denied" page
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+
+
+
+
+
+
+
 """
 PRODUCT LISTING
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def product_list(request):
@@ -66,6 +87,7 @@ def product_list(request):
 """
 CREATE PRODUCT
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def create_product(request):
@@ -157,6 +179,7 @@ def create_product(request):
 """
 EDIT PRODUCT
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def edit_product(request,product_id):
@@ -240,6 +263,7 @@ def edit_product(request,product_id):
 """
 VARIANT LISTING
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def variant_list(request, product_id):
@@ -270,6 +294,7 @@ def variant_list(request, product_id):
 """
 ADD VARIANT
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def add_variant(request, product_id):
@@ -325,7 +350,9 @@ def add_variant(request, product_id):
 
 
 
+@admin_required
 @never_cache
+@user_passes_test(is_admin)
 def update_variant(request, variant_id):
     variant = get_object_or_404(ProductVariant, id = variant_id)
 
@@ -386,6 +413,7 @@ def update_variant(request, variant_id):
 """
 DELETE VARIANT
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def delete_variant(request, variant_id):
@@ -400,6 +428,7 @@ def delete_variant(request, variant_id):
 """
 LISTING AND UNLISTING THE PRODUCTS
 """
+@admin_required
 @never_cache
 @user_passes_test(is_admin)
 def toggle_product_listing(request, product_id):
@@ -429,43 +458,116 @@ def toggle_product_listing(request, product_id):
 PRODUCT DETAILS PAGE
 """
 def product_details(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    
-    # Get all variants that are in stock
-    variants = product.variants.filter(stock__gt=0)
+    if request.method == "POST":
+        color = request.POST.get('color')
+        size = request.POST.get('size')
+        product = get_object_or_404(Product, id=product_id)
+        variants = product.variants.filter(color=color, size=size)
+        variant_data = [{"color": v.color, "size": v.size, "stock": v.stock} for v in variants]
+        return JsonResponse({"variants": variant_data})
 
-    # Calculate total stock
+    product = get_object_or_404(Product, id=product_id)
+    variants = product.variants.filter(stock__gt=0)
     total_stock = sum(variant.stock for variant in variants)
-    
-    # Get unique colors and sizes
     unique_colors = variants.values_list('color', flat=True).distinct()
-    
-    # Create a dictionary with colors as keys and their available sizes as values
     color_size_dict = {}
     for color in unique_colors:
         color_size_dict[color] = list(variants.filter(color=color).values_list('size', flat=True).distinct())
 
-    product_images = product.images.all()  # Fetch all images related to the product
+    product_images = product.images.all()
     related_products = Product.objects.filter(category=product.category).exclude(id=product_id)
-    
-    # Randomly select 4 related products
     related_products = random.sample(list(related_products), min(len(related_products), 5))
 
-
-    # can_review = False
-    # if request.user.is_authenticated:
-    #     can_review = Review.can_review(request.user, product)
+    can_review = False
+    if request.user.is_authenticated:
+        can_review = Review.can_review(request.user, product)
 
     context = {
         'product': product,
         'unique_colors': unique_colors,
-        'color_size_dict': json.dumps(color_size_dict),  # Convert to JSON string
+        'color_size_dict': json.dumps(color_size_dict),
         'product_images': product_images,
         'related_products': related_products,
-        'variants':variants,
-        'total_stock':total_stock
-        
+        'variants': variants,
+        'total_stock': total_stock,
+        'can_review': can_review,
     }
     return render(request, 'user/product_details.html', context)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# """
+# PRODUCT DETAILS PAGE
+# """
+# def product_details(request, product_id):
+#     product = get_object_or_404(Product, id=product_id)
+    
+#     # Get all variants that are in stock
+#     variants = product.variants.filter(stock__gt=0)
+
+#     # Calculate total stock
+#     total_stock = sum(variant.stock for variant in variants)
+    
+#     # Get unique colors and sizes
+#     unique_colors = variants.values_list('color', flat=True).distinct()
+    
+#     # Create a dictionary with colors as keys and their available sizes as values
+#     color_size_dict = {}
+#     for color in unique_colors:
+#         color_size_dict[color] = list(variants.filter(color=color).values_list('size', flat=True).distinct())
+
+#     product_images = product.images.all()  # Fetch all images related to the product
+#     related_products = Product.objects.filter(category=product.category).exclude(id=product_id)
+    
+#     # Randomly select 4 related products
+#     related_products = random.sample(list(related_products), min(len(related_products), 5))
+
+
+#     can_review = False
+#     if request.user.is_authenticated:
+#         can_review = Review.can_review(request.user, product)
+
+#     context = {
+#         'product': product,
+#         'unique_colors': unique_colors,
+#         'color_size_dict': json.dumps(color_size_dict),  # Convert to JSON string
+#         'product_images': product_images,
+#         'related_products': related_products,
+#         'variants':variants,
+#         'total_stock':total_stock,
+#         'can_review': can_review,
+        
+#     }
+#     return render(request, 'user/product_details.html', context)
+
+
+
+
+
+
+
+# """
+# STOCK CHECKING WHEN ADDING TO CART/CHECKOUT
+# """
+# def check_stock(request):
+#     if request.method == "POST":
+#         color = request.POST.get('color')
+#         size = request.POST.get('size')
+#         variants = ProductVariant.objects.filter(product__is_listed=True)
+#         variant_data = [{'color': variant.color, 'size': variant.size, 'stock': variant.stock} for variant in variants]
+#         return JsonResponse({'variants': variant_data})
+#     return JsonResponse({'error': 'Invalid request'}, status=400)

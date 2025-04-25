@@ -6,6 +6,8 @@ from .forms import CouponForm
 from django.contrib import messages
 from django.utils import timezone
 from decimal import Decimal
+from functools import wraps
+from django.views.decorators.cache import never_cache
 
 
 # Create your views here.
@@ -122,9 +124,24 @@ def is_admin(user):
 
 
 
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('admin_login')  # your admin login page route name
+        if not request.user.is_staff:  # or use a custom user check like user.role == 'admin'
+            return redirect('admin_login')  # or maybe a "permission denied" page
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+
+
 """
 COUPON LISTING IN THE ADMIN SIDE
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
 def coupon_list(request):
     query = request.GET.get('q', '')
@@ -150,6 +167,8 @@ def coupon_list(request):
 """
 ADD NEW COUPON
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
 def add_coupon(request):
     if request.method == 'POST':
@@ -169,6 +188,8 @@ def add_coupon(request):
 """
 EDIT AVAILABLE COUPON
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
 def edit_coupon(request, coupon_id):
     coupon = get_object_or_404(Coupon, coupon_id=coupon_id)
@@ -191,6 +212,8 @@ def edit_coupon(request, coupon_id):
 """
 COUPON ACTIVATE/DEACTIVATE
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
 def toggle_coupon_status(request, coupon_id):
     coupon = get_object_or_404(Coupon, coupon_id=coupon_id)
@@ -206,6 +229,8 @@ def toggle_coupon_status(request, coupon_id):
 """
 COUPON DELETING
 """
+@admin_required
+@never_cache
 @user_passes_test(is_admin)
 def delete_coupon(request, coupon_id):
     coupon = get_object_or_404(Coupon, coupon_id=coupon_id)

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--=============== FLATICON ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+    />
+
+    <!--=============== SWIPER CSS ===============-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+      <!-- External CSS (e.g., Bootstrap) -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <title>Ecommerce Website</title>
+  </head>
+  <body>
+    <!--=============== HEADER ===============-->
+    
+    {% include 'header.html' %}
+
+    <!--=============== MAIN ===============-->
+    <main class="main">
+      <!--=============== BREADCRUMB ===============-->
+      <section class="breadcrumb">
+        <ul class="breadcrumb__list flex container">
+            <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+            <li><span class="breadcrumb__link"></span>></li>
+            <li><span class="breadcrumb__link">shop</span></li>
+            <li><span class="breadcrumb__link"></span>></li>
+            <li><span class="breadcrumb__link">product details</span></li>
+            <li><span class="breadcrumb__link"></span>></li>
+            <li><span class="breadcrumb__link">Review</span></li>
+        </ul>
+      </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    .review-form {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+    }
+
+    .review-form h2 {
+        margin-bottom: 20px;
+        font-size: 2rem;
+        color: #333;
+        text-align: center;
+    }
+
+    .review-form label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .review-form .rating-stars-input {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .review-form .rating-stars-input .star {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #e9e9e4;
+        transition: color 0.3s ease;
+    }
+
+    .review-form .rating-stars-input .star.filled {
+        color: #ffc107;
+    }
+
+    .review-form textarea {
+        width: 100%;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .review-form button {
+        width: 100%;
+        padding: 15px;
+        background-color: #088178;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .review-form button:hover {
+        background-color: #066c65;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+</style>
+
+
+
+<div class="review-form">
+    
+    <h2>Edit Review for {{ product.name }}</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="error-message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form method="post" action="{% url 'edit_review' review.id %}">
+        {% csrf_token %}
+        <label for="rating">Rating:</label>
+        <div class="rating-stars-input">
+            {% for i in "12345" %}
+                <span class="star" data-value="{{ i }}" onclick="setRating(this)">&#9733;</span>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="rating" id="rating" value="{{ review.rating }}" required>
+        <label for="review_text">Review:</label>
+        <textarea name="review_text" id="review_text" rows="4" required>{{ review.review_text }}</textarea>
+        <button type="submit">Update Review</button>
+    </form>
+</div>
+
+<script>
+    function setRating(star) {
+        const rating = star.getAttribute('data-value');
+        document.getElementById('rating').value = rating;
+        const stars = document.querySelectorAll('.rating-stars-input .star');
+        stars.forEach((s, index) => {
+            if (index < rating) {
+                s.classList.add('filled');
+            } else {
+                s.classList.remove('filled');
+            }
+        });
+    }
+
+    // Set initial rating stars
+    document.addEventListener('DOMContentLoaded', function() {
+        const rating = document.getElementById('rating').value;
+        const stars = document.querySelectorAll('.rating-stars-input .star');
+        stars.forEach((s, index) => {
+            if (index < rating) {
+                s.classList.add('filled');
+            } else {
+                s.classList.remove('filled');
+            }
+        });
+    });
+</script>
+
+
+
+
+    <!-- External JS (e.g., Bootstrap) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+      
+
+
+
+  </body>
+</html>

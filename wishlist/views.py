@@ -26,6 +26,10 @@ def wishlist_view(request):
         first_image = item.product.images.first()
         item.first_image_url = first_image.image.url if first_image else None
 
+        # Check stock status based on variants
+        variants = item.product.variants.all()
+        item.is_in_stock = any(variant.stock > 0 for variant in variants) if variants.exists() else False
+
 
 
     return render(request,'user/wishlist.html', {'wishlist_items': items, 'wishlist_items': wishlist_items} )
@@ -87,106 +91,6 @@ def move_to_cart(request, item_id):
 
     return redirect('wishlist')
 
-
-
-
-
-
-
-# @login_required
-# def move_to_cart(request, item_id):
-#     """Move a wishlist item to the cart and remove it from the wishlist."""
-#     try:
-#         item = get_object_or_404(WishlistItem, id=item_id, wishlist__user=request.user)
-        
-#         # Ensure the cart exists
-#         cart, created = Cart.objects.get_or_create(user=request.user)
-        
-#         # Move to cart
-#         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=item.product)
-#         if not created:
-#             cart_item.quantity += 1  # Increase quantity if already exists
-#             cart_item.save()
-
-#         # Remove from wishlist
-#         item.delete()
-
-#         return JsonResponse({"status": "success", "message": "Moved to cart"})
-    
-#     except Exception as e:
-#         logger.error(f"Error in move_to_cart: {str(e)}")
-#         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-
-
-
-
-
-    
-
-
-# @login_required
-# def move_to_cart(request, item_id):
-#     """Move a wishlist item to the cart and remove it from the wishlist."""
-#     item = get_object_or_404(WishlistItem, id=item_id, wishlist__user=request.user)
-    
-#     # Ensure the cart exists
-#     cart, created = Cart.objects.get_or_create(user=request.user)
-    
-#     # Move to cart
-#     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=item.product)
-#     if not created:
-#         cart_item.quantity += 1  # Increase quantity if already exists
-#         cart_item.save()
-
-#     # Remove from wishlist
-#     item.delete()
-
-#     return JsonResponse({"status": "success", "message": "Moved to cart"})
-
-
-
-
-    
-
-
-# @login_required
-# def move_to_cart(request, item_id):
-#     """Move a wishlist item to the cart and remove it from the wishlist."""
-#     try:
-#         # Get the wishlist item
-#         item = get_object_or_404(WishlistItem, id=item_id, wishlist__user=request.user)
-
-#         # Ensure the cart exists
-#         cart, created = Cart.objects.get_or_create(user=request.user)
-
-#         # Move item to cart
-#         cart_item, cart_created = CartItem.objects.get_or_create(cart=cart, product=item.product)
-        
-#         if not cart_created:
-#             cart_item.quantity += 1  # Increase quantity if already in cart
-#             cart_item.save()
-
-#         # Remove from wishlist
-#         item.delete()
-
-#         return JsonResponse({"status": "success", "message": "Moved to cart"})
-
-#     except Exception as e:
-#         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-
-
-
-
-
-    
-
-
-
-
-
-    
 
 
 

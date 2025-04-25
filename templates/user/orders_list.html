@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -280,38 +283,40 @@
 
                 {% if orders %}
                 {% for order in orders %}
-                <div class="order-item">
-                    <div class="row align-items-center">
-                        <!-- Order Details -->
-                        <div class="col-md-8">
-                            <h5 class="mb-2">Order ID: <span class="order-id">#{{ order.id }}</span></h5>
-                            <p class="mb-0">Ordered on {{ order.created_at|date:"d M Y" }}</p>
-                            <p class="mb-0">Total Amount: ₹{{ order.total_price|floatformat:2 }}</p>
-                            <p class="mb-0">
-                                <span class="status-dot status-{{ order.status }}"></span>
-                                {{ order.get_status_display }}
-                            </p>
-                        </div>
+<div class="order-item">
+    <div class="row align-items-center">
+        <!-- Order Details -->
+        <div class="col-md-8">
+            <h5 class="mb-2">Order ID: <span class="order-id">#{{ order.id }}</span></h5>
+            <p class="mb-0">Ordered on {{ order.created_at|date:"d M Y" }}</p>
+            <p class="mb-0">Total Amount: ₹{{ order.total_price|floatformat:2 }}</p>
+            <p class="mb-0">
+                <span class="status-dot status-{{ order.status }}"></span>
+                {{ order.get_status_display }}
+            </p>
+            {% if order.payment_status == 'Pending' and order.payment_method == 'razorpay' %}
+            <p class="text-warning">Payment Pending - Retry Available</p>
+            {% endif %}
+        </div>
 
-                        <!-- Actions -->
-                        <div class="col-md-4 text-end d-flex justify-content-end">
-                            {% if order.status in 'completed' %}
-                            <a href="{% url 'download_invoice' order.id %}"
-                                class="btn btn-success btn-download-invoice me-1">Download Invoice
-                            </a>
-                            {% elif order.payment_status == 'Processing' and order.payment_method == 'razorpay' %}
-                            <a href="{% url 'retry_payment' order.id %}" class="btn btn-warning me-1">
-                                <i class="bi bi-arrow-repeat me-1"></i>Retry Payment
-                            </a>
-                            {% endif %}
-                            
-                            <a href="{% url 'order_items' order.id %}"
-                                class="btn btn-primary btn-view-details me-1">View Items
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+        <!-- Actions -->
+        <div class="col-md-4 text-end d-flex justify-content-end">
+            {% if order.status == 'completed' %}
+            <a href="{% url 'download_invoice' order.id %}"
+               class="btn btn-success btn-download-invoice me-1">Download Invoice
+            </a>
+            {% elif order.payment_status == 'Pending' and order.payment_method == 'razorpay' %}
+            <a href="{% url 'payments:retry_payment' order.id %}" class="btn btn-warning me-1">
+                <i class="bi bi-arrow-repeat me-1"></i> Retry Payment
+            </a>
+            {% endif %}
+            <a href="{% url 'order_items' order.id %}"
+               class="btn btn-primary btn-view-details me-1">View Items
+            </a>
+        </div>
+    </div>
+</div>
+{% endfor %}
                 
                 <!-- Pagination-->
                 <div class="pagination">
@@ -344,7 +349,9 @@
 </div>
 
 
-
+<!--=============== FOOTER ===============-->
+        
+{% include 'footer.html' %}
 
 
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -9,181 +10,413 @@
     <link
       rel="stylesheet"
       href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
-
-
     />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{% static 'adminuser/img/order.png' %}">
-
     
     <!--=============== SWIPER CSS ===============-->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-/>
+    />
 
-      <!-- External CSS (e.g., Bootstrap) -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <!-- External CSS (e.g., Bootstrap) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!--=============== CSS ===============-->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <title>Ecommerce Website</title>
   </head>
   <body>
     <!--=============== HEADER ===============-->
-    
     {% include 'header.html' %}
 
-
-
-
-
-
 <style>
-    .checkout-container {
-        padding: 2rem;
+    /* Classic color palette */
+    :root {
+        --primary-color: #3a5a78;
+        --secondary-color: #f8f9fa;
+        --accent-color: #9a7f3f;
+        --text-color: #333;
+        --border-color: #dee2e6;
+        --light-accent: #f4f6f8;
+        --success-color: #568c63;
+        --discount-color: #8e3a59;
     }
 
-    h2.cart-title {
+    body {
+        background-color: #f9f9f9;
+        color: var(--text-color);
         font-family: 'Poppins', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
-        color: #333;
+    }
+
+    .checkout-container {
+        padding: 2rem 3rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-color);
     }
 
     .cart-item {
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--border-color);
         border-radius: 8px;
-        padding: 1rem;
+        padding: 1.25rem;
         margin-bottom: 1rem;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease;
+    }
+
+    .cart-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .product-image {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         object-fit: cover;
         border-radius: 4px;
+        border: 1px solid var(--border-color);
     }
 
     .original-price {
         text-decoration: line-through;
         color: #6c757d;
+        font-size: 0.9rem;
     }
 
     .offer-price {
-        color: #198754;
+        color: var(--success-color);
         font-weight: bold;
+        font-size: 1.1rem;
     }
 
     .address-card {
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--border-color);
         border-radius: 8px;
-        padding: 1rem;
+        padding: 1.25rem;
         margin-bottom: 1rem;
-        background-color: #f8f9fa;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .address-card.selected {
-        border-color: #0d6efd;
-        background-color: #f0f7ff;
+        border-color: var(--primary-color);
+        background-color: var(--light-accent);
     }
 
     .payment-option {
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--border-color);
         border-radius: 8px;
         padding: 1rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        background-color: white;
+        transition: all 0.2s ease;
+    }
+
+    .payment-option:hover {
+        border-color: var(--primary-color);
+        background-color: var(--light-accent);
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
     }
 
     .summary-card {
-        background-color: #f8f9fa;
+        background-color: white;
         border-radius: 8px;
-        padding: 1rem;
-    }
-
-    .modal-body {
-        max-height: 70vh;
-        overflow-y: auto;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid var(--border-color);
     }
 
     .coupon-section {
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--border-color);
         border-radius: 8px;
-        padding: 1rem;
-        background-color: #f8f9fa;
+        padding: 1.25rem;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
     }
 
-    .coupon-section .alert {
-        margin-bottom: 0;
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background-color: #2c4761;
+        border-color: #2c4761;
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .breadcrumb {
+        background-color: var(--secondary-color);
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .breadcrumb__link {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .breadcrumb__list {
+        list-style: none;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        padding-left: 0;
+    }
+
+    .text-success {
+        color: var(--success-color) !important;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .modal-title {
+        color: white;
+    }
+
+    .btn-close {
+        color: white;
+        filter: brightness(0) invert(1);
+    }
+
+    .available-coupon {
+        border-left: 4px solid var(--accent-color);
+    }
+
+    .card-subtitle {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .save-amount {
+        color: var(--discount-color);
+        font-weight: 600;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .summary-label {
+        color: #555;
+    }
+
+    .summary-value {
+        font-weight: 500;
+    }
+
+    .summary-total {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    /* Product details styling */
+    .product-details {
+        padding-left: 1rem;
+    }
+    
+    .product-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-meta {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 0.75rem;
+    }
+
+    .price-quantity {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Error message styling */
+    .text-danger {
+        color: #d9534f !important;
+    }
+
+    /* Applied coupon styling */
+    .coupon-applied {
+        background-color: rgba(86, 140, 99, 0.1);
+        border: 1px solid var(--success-color);
+        padding: 0.75rem;
+        border-radius: 6px;
     }
 </style>
-
-
-
 
 <!-- Breadcrumb -->
 <section class="breadcrumb">
     <ul class="breadcrumb__list flex container">
       <li><a href="index.html" class="breadcrumb__link">Home</a></li>
-      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">></span></li>
       <li><span class="breadcrumb__link">Cart</span></li>
-      <li><span class="breadcrumb__link"></span>></li>
+      <li><span class="breadcrumb__link">></span></li>
       <li><span class="breadcrumb__link">Checkout</span></li>
     </ul>
-  </section>
-
-
-
-
+</section>
 
 <div class="checkout-container">
     <div class="row g-4">
-        <!-- Left Column - Cart Items -->
+        <!-- Left Column - Cart Items & Coupon -->
         <div class="col-lg-8">
-            <h2 class="cart-title mb-4">Your Cart</h2>
+            <h3 class="section-title">Your Cart</h3>
+            
+            <!-- Cart Items -->
             {% for item in cart_items %}
             <div class="cart-item">
                 <div class="row align-items-center">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <img src="{{ item.product_variant.product.images.first.image.url }}"
                             alt="{{ item.product_variant.product.name }}" class="product-image">
                     </div>
-                    <div class="col-md-9">
-                        <h5 class="mb-2">{{ item.product_variant.product.name }}</h5>
-                        <p class="mb-2">
-                            Size: {{ item.product_variant.size }} |
-                            Color: {{ item.product_variant.color }}
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                {% if item.product_variant.product.has_offer %}
-                                <span class="original-price me-2">₹{{ item.product_variant.product.price|floatformat:2 }}</span>
-                                <span class="offer-price">₹{{ item.product_variant.product.best_offer_price|floatformat:2 }}</span>
-                                {% else %}
-                                <span class="offer-price">₹{{ item.product_variant.product.price|floatformat:2 }}</span>
-                                {% endif %}
+                    <div class="col-md-10">
+                        <div class="product-details">
+                            <h5 class="product-name">{{ item.product_variant.product.name }}</h5>
+                            <div class="product-meta">
+                                <span><i class="fas fa-ruler me-1"></i> Size: {{ item.product_variant.size }}</span> | 
+                                <span><i class="fas fa-palette me-1"></i> Color: {{ item.product_variant.color }}</span>
                             </div>
-                            <div>
-                                Quantity: {{ item.quantity }} |
-                                Subtotal: ₹{{ item.subtotal|floatformat:2 }}
+                            <div class="price-quantity">
+                                <div>
+                                    {% if item.product_variant.product.has_offer %}
+                                    <span class="original-price me-2">₹{{ item.product_variant.product.price|floatformat:2 }}</span>
+                                    <span class="offer-price">₹{{ item.product_variant.product.best_offer_price|floatformat:2 }}</span>
+                                    {% else %}
+                                    <span class="offer-price">₹{{ item.product_variant.product.price|floatformat:2 }}</span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <span class="text-muted"><i class="fas fa-box me-1"></i> Qty: {{ item.quantity }}</span> | 
+                                    <span class="fw-semibold">Subtotal: ₹{{ item.subtotal|floatformat:2 }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
+            
+            <!-- Coupon Section (Moved from right column) -->
+            <h3 class="section-title mt-4">Apply Coupon</h3>
+            <div class="coupon-section">
+                <form method="post" action="{% url 'apply_coupon' %}" class="d-flex gap-2 mb-3">
+                    {% csrf_token %}
+                    <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code"
+                           value="{{ entered_coupon_code }}" required aria-label="Coupon code">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                </form>
+
+                {% if coupon_discount %}
+                <div class="coupon-applied d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <i class="fas fa-tag me-1 text-success"></i>
+                        <span class="text-success fw-semibold">Coupon Applied: {{ request.session.coupon_code }}</span>
+                        <span class="ms-2 text-success fw-bold">₹{{ coupon_discount|floatformat:2 }} off</span>
+                    </div>
+                    <a href="{% url 'remove_coupon' %}" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i>Remove</a>
+                </div>
+                {% endif %}
+
+                <!-- Display available coupons -->
+                {% if available_coupons %}
+                <div class="mt-3">
+                    <h6 class="mb-2 fw-bold text-muted"><i class="fas fa-ticket-alt me-1"></i> Available Coupons</h6>
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        {% for coupon in available_coupons %}
+                        <div class="col">
+                            <div class="card available-coupon shadow-sm border-0 h-100">
+                                <div class="card-body p-3">
+                                    <div class="d-flex flex-column">
+                                        <h6 class="mb-1 text-primary fw-semibold">{{ coupon.coupon_code }}</h6>
+                                        <p class="card-subtitle mb-2">{{ coupon.discount_percentage }}% off (Max ₹{{ coupon.max_discount_amount|floatformat:2 }})</p>
+                                        <small class="text-muted mb-2">Min. Purchase: ₹{{ coupon.minimum_purchase_amount|floatformat:2 }}</small>
+                                        <small class="text-muted">Valid until: {{ coupon.valid_to }}</small>
+                                        <form method="post" action="{% url 'apply_coupon' %}" class="mt-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="coupon_code" value="{{ coupon.coupon_code }}">
+                                            <button type="submit" class="btn btn-sm btn-success w-100"><i class="fas fa-check me-1"></i>Apply Coupon</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'view_coupons' %}" class="btn btn-link" style="text-decoration: none;"><i class="fas fa-external-link-alt me-1"></i>View More Coupons</a>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted mt-2"><i class="fas fa-info-circle me-1"></i>No available coupons at the moment.</p>
+                {% endif %}
+
+                <!-- Display messages -->
+                {% if messages %}
+                <div class="mt-3">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} mb-2">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} me-1"></i>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
         </div>
 
-        <!-- Right Column -->
+        <!-- Right Column - Address, Payment & Summary -->
         <div class="col-lg-4">
             <!-- Delivery Address -->
             <div class="mb-4">
+                <h3 class="section-title">Delivery Address</h3>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4>Delivery Address</h4>
-                    <button class="btn btn-outline-primary btn-sm" onclick="showChangeAddress()">Change</button>
+                    <h6 class="mb-0 text-muted"><i class="fas fa-map-marker-alt me-1"></i> Shipping Details</h6>
+                    <button class="btn btn-primary btn-sm" onclick="showChangeAddress()">
+                        <i class="fas fa-edit me-1"></i>Change
+                    </button>
                 </div>
                 <div class="address-card" id="default-address">
                     {% if default_address %}
@@ -191,65 +424,34 @@
                     <p class="mb-1">{{ default_address.address }}</p>
                     <p class="mb-1">{{ default_address.city }}, {{ default_address.state }}</p>
                     <p class="mb-1">{{ default_address.country }} - {{ default_address.postcode }}</p>
-                    <p class="mb-1">Phone: {{ default_address.phone }}</p>
+                    <p class="mb-1"><i class="fas fa-phone-alt me-1"></i> {{ default_address.phone }}</p>
                     {% else %}
-                    <p>No default address found. Please add an address.</p>
+                    <p><i class="fas fa-exclamation-circle me-1 text-warning"></i> No default address found. Please add an address.</p>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Coupon Section -->
-            <div class="mb-4">
-                <h4 class="mb-3">Apply Coupon</h4>
-                <div class="coupon-section">
-                    <form method="post" action="{% url 'apply_coupon' %}" class="d-flex gap-2 mb-2">
-                        {% csrf_token %}
-                        <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code"
-                            value="{{ entered_coupon_code }}" required>
-                        <button type="submit" class="btn btn-primary">Apply</button>
-                    </form>
-
-                    {% if coupon_discount %}
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{% url 'remove_coupon' %}" class="btn btn-sm btn-outline-danger">Remove</a>
-                        <span class="text-success">Coupon Applied: {{ request.session.coupon_code }} ₹{{ coupon_discount|floatformat:2 }} off</span>
-                    </div>
-                    {% endif %}
-
-                    <!-- Display messages -->
-                    {% if messages %}
-                    <div class="mt-2">
-                        {% for message in messages %}
-                        <div
-                            class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-                            {{ message }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
             <!-- Payment Methods Section -->
             <div class="mb-4">
-                <h4 class="mb-3">Payment Method</h4>
+                <h3 class="section-title">Payment Method</h3>
                 <div class="payment-option">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="payment_method" value="COD" id="cod">
-                        <label class="form-check-label" for="cod">Cash on Delivery</label>
+                        <label class="form-check-label" for="cod"><i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery</label>
                     </div>
                 </div>
                 <div class="payment-option">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="payment_method" value="razorpay"
                             id="razorpay">
-                        <label class="form-check-label" for="razorpay">Online Payment</label>
+                        <label class="form-check-label" for="razorpay"><i class="fas fa-credit-card me-2"></i>Online Payment</label>
                     </div>
                 </div>
                 <div class="payment-option">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="payment_method" value="wallet" id="wallet">
                         <label class="form-check-label" for="wallet">
-                            Wallet (Balance: ₹{{ request.user.wallet.balance|floatformat:2 }})
+                            <i class="fas fa-wallet me-2"></i>Wallet (Balance: ₹{{ request.user.wallet.balance|floatformat:2 }})
                         </label>
                     </div>
                     <div id="wallet-error" class="text-danger mt-2"></div>
@@ -258,39 +460,39 @@
 
             <!-- Order Summary -->
             <div class="summary-card">
-                <h4 class="mb-3">Order Summary</h4>
+                <h3 class="section-title border-bottom-0 mb-3">Order Summary</h3>
 
                 <!-- Total Listed Price -->
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Total Listed Price</span>
-                    <span>₹{{ total_listed_price|floatformat:2 }}</span>
+                <div class="summary-row">
+                    <span class="summary-label">Total Listed Price</span>
+                    <span class="summary-value">₹{{ total_listed_price|floatformat:2 }}</span>
                 </div>
 
                 <!-- Total Offer Price -->
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Total Offer Price</span>
-                    <span>₹{{ total_offer_price|floatformat:2 }}</span>
+                <div class="summary-row">
+                    <span class="summary-label">Total Offer Price</span>
+                    <span class="summary-value">₹{{ total_offer_price|floatformat:2 }}</span>
                 </div>
 
                 <!-- Coupon Discount -->
                 {% if coupon_discount and coupon_discount > 0 %}
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Coupon Discount</span>
+                <div class="summary-row">
+                    <span class="summary-label">Coupon Discount</span>
                     <span class="text-success">₹{{ coupon_discount|floatformat:2 }}</span>
                 </div>
                 {% endif %}
 
                 <!-- Discounted Amount -->
-                <div class="d-flex justify-content-between mb-2">
-                    <span>You Save</span>
-                    <span class="text-success">₹{{ discounted_amount|floatformat:2 }}</span>
+                <div class="summary-row">
+                    <span class="summary-label">You Save</span>
+                    <span class="save-amount">₹{{ discounted_amount|floatformat:2 }}</span>
                 </div>
 
                 <!-- Delivery Charge -->
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Delivery Charge</span>
+                <div class="summary-row">
+                    <span class="summary-label">Delivery Charge</span>
                     {% if delivery_charge %}
-                    <span>₹{{ delivery_charge }}</span>
+                    <span class="summary-value">₹{{ delivery_charge }}</span>
                     {% else %}
                     <span class="text-success">Free</span>
                     {% endif %}
@@ -299,17 +501,19 @@
                 <hr>
 
                 <!-- Grand Total -->
-                <div class="d-flex justify-content-between fw-bold">
-                    <span>Total Amount</span>
-                    <span>₹{{ grand_total|floatformat:2 }}</span>
+                <div class="summary-row">
+                    <span class="summary-total">Total Amount</span>
+                    <span class="summary-total">₹{{ grand_total|floatformat:2 }}</span>
                 </div>
 
                 <!-- Place Order Form -->
-                <form method="POST" action="{% url 'place_order' %}" id="place-order-form" class="mt-3">
+                <form method="POST" action="{% url 'place_order' %}" id="place-order-form" class="mt-4">
                     {% csrf_token %}
                     <input type="hidden" name="address_id" id="address-id" value="{{ default_address.id|default:'' }}">
                     <input type="hidden" name="payment_method" id="payment-method-hidden">
-                    <button type="button" onclick="placeOrder()" class="btn btn-primary w-100">Place Order</button>
+                    <button type="button" onclick="placeOrder()" class="btn btn-primary w-100 py-2">
+                        <i class="fas fa-shopping-bag me-2"></i>Place Order
+                    </button>
                 </form>
                 <div id="error-message" class="text-danger mt-2"></div>
             </div>
@@ -322,7 +526,7 @@
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Select Delivery Address</h5>
+                <h5 class="modal-title"><i class="fas fa-map-marker-alt me-2"></i>Select Delivery Address</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -332,15 +536,15 @@
                     <p class="mb-1">{{ address.address }}</p>
                     <p class="mb-1">{{ address.city }}, {{ address.state }}</p>
                     <p class="mb-1">{{ address.country }} - {{ address.postcode }}</p>
-                    <p class="mb-1">Phone: {{ address.phone }}</p>
+                    <p class="mb-1"><i class="fas fa-phone-alt me-1"></i> {{ address.phone }}</p>
                     <button class="btn btn-primary mt-2" data-address-id="{{ address.id }}"
                         onclick="selectAddress(this)">
-                        Deliver Here
+                        <i class="fas fa-check-circle me-1"></i>Deliver Here
                     </button>
                 </div>
                 {% endfor %}
-                <button class="btn btn-outline-primary w-100" onclick="showAddAddressModal()">
-                    + Add New Address
+                <button class="btn btn-primary w-100" onclick="showAddAddressModal()">
+                    <i class="fas fa-plus me-1"></i>Add New Address
                 </button>
             </div>
         </div>
@@ -352,7 +556,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Address</h5>
+                <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Add New Address</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -386,7 +590,7 @@
                         <label for="phone" class="form-label">Phone</label>
                         <input type="text" class="form-control" id="phone" name="phone" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Save Address</button>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Save Address</button>
                 </form>
             </div>
         </div>
@@ -475,8 +679,6 @@
 
 
 
-
-
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 function placeOrder() {
@@ -502,8 +704,8 @@ function placeOrder() {
 
     const grandTotal = parseFloat("{{ grand_total }}");
 
-    if (paymentMethod === "COD" && grandTotal > 5000) {
-        document.getElementById("error-message").innerText = "Orders above ₹5000 cannot be placed with Cash on Delivery.";
+    if (paymentMethod === "COD" && grandTotal > 1000) {
+        document.getElementById("error-message").innerText = "Orders above ₹1000 cannot be placed with Cash on Delivery.";
         return;
     }
 
@@ -545,7 +747,7 @@ function placeOrder() {
                             key: razorData.razorpay_merchant_key,
                             amount: razorData.razorpay_amount,
                             currency: razorData.currency,
-                            name: "URBAN EDGE",
+                            name: "EVARA",
                             order_id: razorData.razorpay_order_id,
                             handler: function (response) {
                                 fetch(razorData.callback_url, {
@@ -624,7 +826,9 @@ function placeOrder() {
 
 
 
-
+<!--=============== FOOTER ===============-->
+        
+{% include 'footer.html' %}
 
 
 
