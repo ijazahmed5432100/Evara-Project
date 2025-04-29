@@ -290,9 +290,9 @@
 <!-- Breadcrumb -->
 <section class="breadcrumb">
     <ul class="breadcrumb__list flex container">
-      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
       <li><span class="breadcrumb__link">></span></li>
-      <li><span class="breadcrumb__link">Cart</span></li>
+      <li><a href="{% url 'cart_view' %}" class="breadcrumb__link">Cart</a></li>
       <li><span class="breadcrumb__link">></span></li>
       <li><span class="breadcrumb__link">Checkout</span></li>
     </ul>
@@ -560,35 +560,42 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="add-address-form" method="post" action="{% url 'add_address' %}">
+                <form id="add-address-form" method="post" action="{% url 'add_address' %}" novalidate>
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="error-message" id="name-error"></div>
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Address</label>
                         <input type="text" class="form-control" id="address" name="address" required>
+                        <div class="error-message" id="address-error"></div>
                     </div>
                     <div class="mb-3">
                         <label for="city" class="form-label">City</label>
                         <input type="text" class="form-control" id="city" name="city" required>
+                        <div class="error-message" id="city-error"></div>
                     </div>
                     <div class="mb-3">
                         <label for="state" class="form-label">State</label>
                         <input type="text" class="form-control" id="state" name="state" required>
+                        <div class="error-message" id="state-error"></div>
                     </div>
                     <div class="mb-3">
                         <label for="country" class="form-label">Country</label>
                         <input type="text" class="form-control" id="country" name="country" required>
+                        <div class="error-message" id="country-error"></div>
                     </div>
                     <div class="mb-3">
                         <label for="postcode" class="form-label">Postcode</label>
                         <input type="text" class="form-control" id="postcode" name="postcode" required>
+                        <div class="error-message" id="postcode-error"></div>
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone</label>
                         <input type="text" class="form-control" id="phone" name="phone" required>
+                        <div class="error-message" id="phone-error"></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Save Address</button>
                 </form>
@@ -597,22 +604,19 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
-
-
-
-
-
-
+<style>
+    .error-message {
+        color: #721c24;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+</style>
 
 <script>
     let selectedAddressId = "{{ default_address.id|default:'' }}";
@@ -635,7 +639,6 @@
         const defaultAddressDiv = document.getElementById('default-address');
         defaultAddressDiv.innerHTML = addressDetails;
 
-        // Remove the select button from the displayed address
         const selectButton = defaultAddressDiv.querySelector('button');
         if (selectButton) {
             selectButton.remove();
@@ -645,34 +648,121 @@
         addressModal.hide();
     }
 
-    document.getElementById('add-address-form').addEventListener('submit', async function (event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+    // Client-side validation for Add Address form
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('add-address-form');
+        if (!form) return; // Exit if form doesn't exist
 
-        try {
-            const response = await fetch("{% url 'add_address' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: formData
+        const inputs = form.querySelectorAll('input');
+        const nameRegex = /^[A-Za-z\s]+$/;
+        const addressRegex = /^[A-Za-z0-9\s,.#-]+$/;
+        const cityStateCountryRegex = /^[A-Za-z\s]+$/;
+        const postcodeRegex = /^\d{6}$/;
+        const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+
+        function showError(input, message) {
+            const errorElement = document.getElementById(`${input.id}-error`);
+            if (!errorElement) return; // Skip if error element doesn't exist
+            input.classList.add('is-invalid');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearError(input) {
+            const errorElement = document.getElementById(`${input.id}-error`);
+            if (!errorElement) return; // Skip if error element doesn't exist
+            input.classList.remove('is-invalid');
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
+        function validateInput(input) {
+            const value = input.value.trim();
+            clearError(input);
+
+            if (input.id === 'name') {
+                if (!value) return showError(input, 'Name is required.');
+                if (value.length < 2) return showError(input, 'Name must be at least 2 characters long.');
+                if (value.length > 50) return showError(input, 'Name cannot exceed 50 characters.');
+                if (!nameRegex.test(value)) return showError(input, 'Name must contain only letters and spaces.');
+            }
+            if (input.id === 'address') {
+                if (!value) return showError(input, 'Address is required.');
+                if (value.length < 5) return showError(input, 'Address must be at least 5 characters long.');
+                if (value.length > 200) return showError(input, 'Address cannot exceed 200 characters.');
+                if (!addressRegex.test(value)) return showError(input, 'Address can only contain letters, numbers, spaces, and common punctuation (., #, -).');
+            }
+            if (input.id === 'city') {
+                if (!value) return showError(input, 'City is required.');
+                if (value.length < 2) return showError(input, 'City must be at least 2 characters long.');
+                if (value.length > 50) return showError(input, 'City cannot exceed 50 characters.');
+                if (!cityStateCountryRegex.test(value)) return showError(input, 'City must contain only letters and spaces.');
+            }
+            if (input.id === 'state') {
+                if (!value) return showError(input, 'State is required.');
+                if (value.length < 2) return showError(input, 'State must be at least 2 characters long.');
+                if (value.length > 50) return showError(input, 'State cannot exceed 50 characters.');
+                if (!cityStateCountryRegex.test(value)) return showError(input, 'State must contain only letters and spaces.');
+            }
+            if (input.id === 'country') {
+                if (!value) return showError(input, 'Country is required.');
+                if (value.length < 2) return showError(input, 'Country must be at least 2 characters long.');
+                if (value.length > 50) return showError(input, 'Country cannot exceed 50 characters.');
+                if (!cityStateCountryRegex.test(value)) return showError(input, 'Country must contain only letters and spaces.');
+            }
+            if (input.id === 'postcode') {
+                if (!value) return showError(input, 'Postcode is required.');
+                if (!postcodeRegex.test(value)) return showError(input, 'Postcode must be exactly 6 digits.');
+            }
+            if (input.id === 'phone') {
+                if (!value) return showError(input, 'Phone number is required.');
+                if (!phoneRegex.test(value)) return showError(input, 'Invalid phone number format. It should start with an optional "+" followed by 1-14 digits.');
+            }
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => validateInput(input));
+            input.addEventListener('blur', () => validateInput(input));
+        });
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            let hasErrors = false;
+            inputs.forEach(input => {
+                validateInput(input);
+                if (input.classList.contains('is-invalid')) hasErrors = true;
             });
 
-            if (response.ok) {
-                window.location.reload();
-            } else {
+            if (hasErrors) return;
+
+            const formData = new FormData(event.target);
+            try {
+                const response = await fetch("{% url 'add_address' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert alert-danger';
+                    errorDiv.textContent = 'Failed to add address. Please try again.';
+                    event.target.prepend(errorDiv);
+                }
+            } catch (error) {
+                console.error('Error:', error);
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'alert alert-danger';
-                errorDiv.textContent = 'Failed to add address. Please try again.';
+                errorDiv.textContent = 'An error occurred. Please try again.';
                 event.target.prepend(errorDiv);
             }
-        } catch (error) {
-            console.error('Error:', error);
-        }
+        });
     });
-
 </script>
-
 
 
 
@@ -747,7 +837,7 @@ function placeOrder() {
                             key: razorData.razorpay_merchant_key,
                             amount: razorData.razorpay_amount,
                             currency: razorData.currency,
-                            name: "EVARA",
+                            name: "JAMILAH",
                             order_id: razorData.razorpay_order_id,
                             handler: function (response) {
                                 fetch(razorData.callback_url, {

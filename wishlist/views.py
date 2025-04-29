@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404 # type: ignore
 from products.models import Product 
 from .models import Wishlist, WishlistItem
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required # type: ignore
+from django.http import JsonResponse # type: ignore
 from cart.models import Cart, CartItem
 import logging
-from django.contrib import messages
+from django.contrib import messages # type: ignore
 
 # Create your views here.
 
@@ -38,15 +38,17 @@ def wishlist_view(request):
 
 @login_required
 def add_to_wishlist(request, product_id):
-    """Add a product product to the users wishlist."""
+    """Add a product to the user's wishlist."""
     product = get_object_or_404(Product, id=product_id)
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
 
     # Check if the product is already in the wishlist
     if not WishlistItem.objects.filter(wishlist=wishlist, product=product).exists():
         WishlistItem.objects.create(wishlist=wishlist, product=product)
+        return JsonResponse({"success": True, "message": "Product added to wishlist"})
+    else:
+        return JsonResponse({"success": False, "message": "Product is already in your wishlist"})
 
-    return JsonResponse({"status":"success", "message": "Added to wishlist"})
 
 
 

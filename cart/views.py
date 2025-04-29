@@ -8,6 +8,8 @@ from decimal import Decimal
 import logging
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from offers.models import ProductOffer,CategoryOffer
+
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +23,7 @@ def cart_view(request):
         return render(request, 'user/cart.html', {'cart_empty': True, 'message': 'Your cart is empty. Please log in to add items.'})
 
     cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart.items.all()
+    cart_items = cart.items.all().order_by('id').filter(product_variant__product__is_listed=True)
 
     # Check stock availability for each item in the cart
     out_of_stock_items = []
@@ -37,21 +39,21 @@ def cart_view(request):
     total_offer_price = Decimal('0.00')
     for item in cart_items:
         product = item.product_variant.product
-        # product_offer = ProductOffer.objects.filter(product=product, is_active=True).first()
-        # category_offer = CategoryOffer.objects.filter(category=product.category, is_active=True).first()
+        product_offer = ProductOffer.objects.filter(product=product, is_active=True).first()
+        category_offer = CategoryOffer.objects.filter(category=product.category, is_active=True).first()
 
         # Calculate the final price based on the best offer
-        # if product_offer and category_offer:
-        #     final_price = min(
-        #         product.price * (1 - product_offer.discount_percentage / 100),
-        #         product.price * (1 - category_offer.discount_percentage / 100)
-        #     )
-        # elif product_offer:
-        #     final_price = product.price * (1 - product_offer.discount_percentage / 100)
-        # elif category_offer:
-        #     final_price = product.price * (1 - category_offer.discount_percentage / 100)
-        # else:
-        final_price = product.price
+        if product_offer and category_offer:
+            final_price = min(
+                product.price * (1 - product_offer.discount_percentage / 100),
+                product.price * (1 - category_offer.discount_percentage / 100)
+            )
+        elif product_offer:
+            final_price = product.price * (1 - product_offer.discount_percentage / 100)
+        elif category_offer:
+            final_price = product.price * (1 - category_offer.discount_percentage / 100)
+        else:
+            final_price = product.price
 
         quantity = Decimal(str(item.quantity))
         item.subtotal = final_price * quantity

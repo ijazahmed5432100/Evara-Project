@@ -23,6 +23,98 @@ from django.views.decorators.http import require_POST
 
 
 
+
+
+
+
+# Helper function for common validations
+def validate_address_fields(name, address_line, city, state, country, postcode, phone):
+    errors = []
+
+    # Name validation
+    if not name:
+        errors.append("Name is required.")
+    elif len(name) < 2:
+        errors.append("Name must be at least 2 characters long.")
+    elif len(name) > 50:
+        errors.append("Name cannot exceed 50 characters.")
+    elif not re.match(r'^[A-Za-z\s]+$', name):
+        errors.append("Name must contain only letters and spaces.")
+
+    # Address validation
+    if not address_line:
+        errors.append("Address is required.")
+    elif len(address_line) < 5:
+        errors.append("Address must be at least 5 characters long.")
+    elif len(address_line) > 200:
+        errors.append("Address cannot exceed 200 characters.")
+    elif not re.match(r'^[A-Za-z0-9\s,.#-]+$', address_line):
+        errors.append("Address can only contain letters, numbers, spaces, and common punctuation (., #, -).")
+
+    # City validation
+    if not city:
+        errors.append("City is required.")
+    elif len(city) < 2:
+        errors.append("City must be at least 2 characters long.")
+    elif len(city) > 50:
+        errors.append("City cannot exceed 50 characters.")
+    elif not re.match(r'^[A-Za-z\s]+$', city):
+        errors.append("City must contain only letters and spaces.")
+
+    # State validation
+    if not state:
+        errors.append("State is required.")
+    elif len(state) < 2:
+        errors.append("State must be at least 2 characters long.")
+    elif len(state) > 50:
+        errors.append("State cannot exceed 50 characters.")
+    elif not re.match(r'^[A-Za-z\s]+$', state):
+        errors.append("State must contain only letters and spaces.")
+
+    # Country validation
+    if not country:
+        errors.append("Country is required.")
+    elif len(country) < 2:
+        errors.append("Country must be at least 2 characters long.")
+    elif len(country) > 50:
+        errors.append("Country cannot exceed 50 characters.")
+    elif not re.match(r'^[A-Za-z\s]+$', country):
+        errors.append("Country must contain only letters and spaces.")
+
+    # Postcode validation
+    if not postcode:
+        errors.append("Postcode is required.")
+    elif not postcode.isdigit():
+        errors.append("Postcode must be numeric.")
+    elif len(postcode) != 6:
+        errors.append("Postcode must be exactly 6 digits.")
+
+    # Phone validation
+    if not phone:
+        errors.append("Phone number is required.")
+    else:
+        phone_regex = re.compile(r'^\+?[1-9]\d{1,14}$')
+        if not phone_regex.match(phone):
+            errors.append("Invalid phone number format. It should start with an optional '+' followed by 1-14 digits.")
+
+    return errors
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @login_required
 def user_profile(request):
     if request.method == 'POST':
@@ -151,17 +243,11 @@ def add_address(request):
         postcode = request.POST.get('postcode', '').strip()
         phone = request.POST.get('phone', '').strip()
 
-        errors = []
-        if not all([name, address, city, state ,country, postcode, phone]):
-            errors.append("All fields except addutional info are required.")
-        if not postcode.isdigit():
-            errors.append('Postcode must be numeric. ')
-        phone_regex = re.compile(r'^\+?[1-9]\d{1,14}$')    
-        if not phone_regex.match(phone):
-            errors.append("Invalid phone number format.")
+        # Validate fields
+        errors = validate_address_fields(name, address, city, state, country, postcode, phone)
 
-        # Check if the address already exists for the user
-        if Address.objects.filter(
+        # Check for duplicate address
+        if not errors and Address.objects.filter(
             user=request.user,
             name=name,
             address=address,
@@ -174,20 +260,18 @@ def add_address(request):
             errors.append("This address already exists.")
 
         if errors:
-            return render(request, 'user/add_address.html',{
-                'errors':errors,
+            return render(request, 'user/add_address.html', {
+                'errors': errors,
                 'data': {
                     'name': name,
-                        'address': address,
-                        'city': city,
-                        'state': state,
-                        'country': country,
-                        'postcode': postcode,
-                        'phone': phone,
-                    },
+                    'address': address,
+                    'city': city,
+                    'state': state,
+                    'country': country,
+                    'postcode': postcode,
+                    'phone': phone,
                 },
-            ) 
-
+            })
 
         Address.objects.create(
             user=request.user,
@@ -198,10 +282,10 @@ def add_address(request):
             country=country,
             postcode=postcode,
             phone=phone,
-        ) 
+        )
         messages.success(request, 'Address added successfully!')
-        return redirect('addresses')  
-                
+        return redirect('addresses')
+
     return render(request, 'user/add_address.html')
 
 
@@ -226,17 +310,11 @@ def edit_address(request, address_id):
         postcode = request.POST.get('postcode', '').strip()
         phone = request.POST.get('phone', '').strip()
 
-        errors = []
-        if not all([name, address_line, city, state, country, postcode, phone]):
-            errors.append("All fields are required.")
-        if not postcode.isdigit():
-            errors.append("Postcode must be numeric.")
-        phone_regex = re.compile(r'^\+?[1-9]\d{1,14}$')
-        if not phone_regex.match(phone):
-            errors.append("Invalid phone number format.")
+        # Validate fields
+        errors = validate_address_fields(name, address_line, city, state, country, postcode, phone)
 
-        # Check if the address already exists for the user
-        if Address.objects.filter(
+        # Check for duplicate address (excluding the current address)
+        if not errors and Address.objects.filter(
             user=request.user,
             name=name,
             address=address_line,
@@ -249,23 +327,20 @@ def edit_address(request, address_id):
             errors.append("This address already exists.")
 
         if errors:
-            return render(
-                request,
-                'user/edit_address.html',
-                {
-                    'errors': errors,
-                    'data': {
-                        'id': address_id,
-                        'name': name,
-                        'address': address_line,
-                        'city': city,
-                        'state': state,
-                        'country': country,
-                        'postcode': postcode,
-                        'phone': phone,
-                    },
+            return render(request, 'user/edit_address.html', {
+                'errors': errors,
+                'data': {
+                    'id': address_id,
+                    'name': name,
+                    'address': address_line,
+                    'city': city,
+                    'state': state,
+                    'country': country,
+                    'postcode': postcode,
+                    'phone': phone,
                 },
-            )
+                'address': address,
+            })
 
         address.name = name
         address.address = address_line

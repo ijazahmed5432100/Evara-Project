@@ -126,9 +126,9 @@
 <!-- Breadcrumb -->
 <section class="breadcrumb">
     <ul class="breadcrumb__list flex container">
-      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+        <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
       <li><span class="breadcrumb__link"></span>></li>
-      <li><span class="breadcrumb__link">About</span></li>
+      <li><a href="{% url 'about' %}" class="breadcrumb__link">About</a></li>
       
     </ul>
   </section>
@@ -156,12 +156,12 @@
                 </div>
                 <div class="row align-items-center">
                     <div class="col-lg-6">
-                        <p>Welcome to <strong>EVARA</strong>, where quality meets convenience. We started as a small store in Calicut and have grown into a trusted online destination for mens fashion, and lifestyle products.</p>
+                        <p>Welcome to <strong>JAMILAH</strong>, where quality meets convenience. We started as a small store in Calicut and have grown into a trusted online destination for womens fashion, and lifestyle products.</p>
                         <p>Our journey began in 2024 when our founder, Ijaz Ahmed, recognized the need for a shopping platform that combines high-quality products with exceptional customer service. What started as a passion project has evolved into a thriving e-commerce business serving customers.</p>
-                        <p>At <strong>EVARA</strong>, we believe shopping should be enjoyable, easy, and personalized. We handpick every item in our collection to ensure they meet our standards for quality, style, and value.</p>
+                        <p>At <strong>JAMILAH</strong>, we believe shopping should be enjoyable, easy, and personalized. We handpick every item in our collection to ensure they meet our standards for quality, style, and value.</p>
                     </div>
                     <div class="col-lg-6">
-                        <img src="{% static 'assets/img/shopphoto.jpeg' %}" alt="Our store" class="img-fluid rounded">
+                        <img src="{% static 'assets/img/jamilah_about.jpeg' %}" alt="Our store" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -237,18 +237,12 @@
                 <div class="row">
                     <div class="col-lg-3 col-md-6">
                         <div class="team-member">
-                            <img src="{% static 'assets/img/ijaz.jpg' %}" alt="Sarah Johnson" class="team-img">
+                            <img src="{% static 'assets/img/ijaz9.jpg' %}" alt="Sarah Johnson" class="team-img">
                             <h4>Ijaz Ahmed</h4>
                             <p class="text-muted">Founder & CEO</p>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="team-member">
-                            <img src="{% static 'assets/img/aseemroshan.jpeg' %}" alt="Michael Chen" class="team-img">
-                            <h4>Aseem Roshan</h4>
-                            <p class="text-muted">Operations Director</p>
-                        </div>
-                    </div>
+                    
                     <div class="col-lg-3 col-md-6">
                         <div class="team-member">
                             <img src="{% static 'assets/img/fathima.jpeg' %}" alt="Amara Wilson" class="team-img">
@@ -258,8 +252,8 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="team-member">
-                            <img src="{% static 'assets/img/mhdashique.jpg' %}" alt="David Park" class="team-img">
-                            <h4>Arjun G</h4>
+                            <img src="{% static 'assets/img/shamil.jpeg' %}" alt="David Park" class="team-img">
+                            <h4>Shamil</h4>
                             <p class="text-muted">Tech Lead</p>
                         </div>
                     </div>

@@ -249,11 +249,9 @@
 <!-- Breadcrumb -->
 <section class="breadcrumb">
     <ul class="breadcrumb__list flex container">
-      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
       <li><span class="breadcrumb__link"></span>></li>
-      <li><span class="breadcrumb__link">profile</span></li>
-      <li><span class="breadcrumb__link"></span>></li>
-      <li><span class="breadcrumb__link">Orders</span></li>
+      <li><a href="{% url 'user_orders' %}" class="breadcrumb__link">Orders</a></li>
       <li><span class="breadcrumb__link"></span>></li>
       <li><span class="breadcrumb__link">Order Items</span></li>
     </ul>
@@ -283,9 +281,9 @@
                             <i class="bi bi-box"></i> My Orders
                         </a>
                         <a class="nav-link" href="{% url 'wallet_view' %}">
-                            <i class="bi bi-wallet"></i> My Wallet
+                            <i class="bi bi-wallet"></i> Wallet
                         </a>
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'view_coupons' %}">
                             <i class="bi bi-ticket-perforated"></i> Coupons
                         </a>
                         <a class="nav-link logout-link" href="{% url 'userlogout' %}">

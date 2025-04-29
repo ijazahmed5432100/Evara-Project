@@ -178,9 +178,9 @@
 
 <section class="breadcrumb" >
     <ul class="breadcrumb__list flex container">
-      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
       <li><span class="breadcrumb__link"></span>></li>
-      <li><span class="breadcrumb__link">Addresses</span></li>
+      <li><span class="breadcrumb__link">Wallet</span></li>
       
     </ul>
   </section>
@@ -200,10 +200,10 @@
                         <a class="nav-link" href="{% url 'user_orders' %}">
                             <i class="bi bi-box"></i> My Orders
                         </a>
-                        <a class="nav-link active" href="{% url 'wallet_view' %}">
+                        <a class="nav-link" href="{% url 'wallet_view' %}">
                             <i class="bi bi-wallet"></i> Wallet
                         </a>
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{% url 'view_coupons' %}">
                             <i class="bi bi-ticket-perforated"></i> Coupons
                         </a>
                         <a class="nav-link logout-link" href="{% url 'userlogout' %}">

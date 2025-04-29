@@ -1,131 +1,335 @@
 {% load socialaccount %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Jamilah - Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --jamilah-gold: #d4b872;
+            --jamilah-dark-green: #1a3a2a;
+            --jamilah-medium-green: #2c5a41;
+            --jamilah-light-green: #386641;
+            --light-gold: #f0e6cf;
+        }
+        
         body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .login-container {
-            max-width: 1200px;
-            margin: 5rem auto;
-            border-radius: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            background-color: white;
+            position: relative;
         }
         
         .login-form {
-            padding: 3rem 4rem;
+            padding: 3.5rem 3rem;
+        }
+        
+        .brand-logo {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .brand-logo img {
+            height: 60px;
         }
         
         .login-title {
+            font-family: 'Playfair Display', serif;
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            color: var(--jamilah-dark-green);
         }
         
         .login-subtitle {
-            color: #555;
-            margin-bottom: 2rem;
+            color: #777;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
         }
         
         .form-label {
             font-weight: 500;
             margin-bottom: 0.5rem;
+            color: var(--jamilah-dark-green);
+            font-size: 0.9rem;
         }
         
         .form-control {
-            padding: 0.7rem 1rem;
-            border-radius: 6px;
-            border: 1px solid #ddd;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
             margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        .form-control:focus {
+            border-color: var(--jamilah-gold);
+            box-shadow: 0 0 0 0.2rem rgba(212, 184, 114, 0.15);
+            background-color: white;
         }
         
         .forgot-password {
             text-align: right;
-            font-size: 14px;
+            font-size: 0.85rem;
             margin-top: -1.25rem;
-            margin-bottom: 1rem;
-        }
-        
-        .forgot-password a {
-            color: blue;
-            text-decoration: none;
-        }
-        
-        .form-check {
             margin-bottom: 1.5rem;
         }
         
+        .forgot-password a {
+            color: var(--jamilah-medium-green);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: var(--jamilah-gold);
+        }
+        
         .btn-login {
-            background-color: #3c6e41;
+            background: linear-gradient(135deg, var(--jamilah-medium-green), var(--jamilah-dark-green));
             border: none;
             color: white;
             width: 100%;
-            padding: 0.7rem;
-            border-radius: 6px;
+            padding: 0.9rem;
+            border-radius: 8px;
             font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(44, 90, 65, 0.2);
+        }
+        
+        .btn-login:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn-login:hover:before {
+            left: 100%;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(44, 90, 65, 0.3);
         }
         
         .divider {
             text-align: center;
-            margin: 1.5rem 0;
-            color: #6c757d;
+            margin: 2rem 0;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+        }
+        
+        .divider:before,
+        .divider:after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.9rem;
         }
         
         .social-signin {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
         
         .btn-social {
             flex: 1;
             padding: 0.7rem;
-            border-radius: 6px;
-            border: 1px solid #ddd;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
             background-color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            font-size: 14px;
+            font-size: 0.9rem;
             font-weight: 500;
+            color: #555;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-social:hover {
+            border-color: var(--jamilah-gold);
+            background-color: #fff9ed;
+            transform: translateY(-2px);
         }
         
         .signup-link {
             text-align: center;
+            font-size: 0.9rem;
+            color: #777;
         }
         
         .signup-link a {
-            color: blue;
+            color: var(--jamilah-gold);
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
         
-        .plant-image {
-            background-image: url('https://images.unsplash.com/photo-1614594975525-e45190c55d0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80');
-            background-size: cover;
-            background-position: center;
-            border-radius: 0 12px 12px 0;
+        .signup-link a:hover {
+            color: var(--jamilah-dark-green);
+        }
+        
+        .image-side {
+            background-color: var(--jamilah-dark-green);
             height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 58, 42, 0.6), rgba(26, 58, 42, 0.3));
+            z-index: 1;
+        }
+        
+        .brand-message {
+            position: absolute;
+            bottom: 10%;
+            width: 100%;
+            text-align: center;
+            color: white;
+            z-index: 2;
+        }
+        
+        .brand-message h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--jamilah-gold);
+        }
+        
+        .brand-message p {
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            padding: 0 2rem;
+        }
+        
+        .brand-btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border: 1px solid var(--jamilah-gold);
+            color: var(--jamilah-gold);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        
+        .brand-btn:hover {
+            background-color: var(--jamilah-gold);
+            color: var(--jamilah-dark-green);
+        }
+        
+        .brand-logo-overlay {
+            position: absolute;
+            top: 10%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+        }
+        
+        .brand-logo-overlay img {
+            height: 40px;
+        }
+        
+        .alert {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .login-container {
+                max-width: 95%;
+                margin: 1rem auto;
+            }
+            
+            .image-side {
+                display: none;
+            }
+            
+            .login-form {
+                padding: 2rem 1.5rem;
+            }
         }
     </style>
 </head>
 
-
 <body>
     <div class="container">
-        <div class="login-container row bg-white">
+        <div class="login-container row">
             <div class="col-md-6 login-form">
-                <h1 class="login-title">Welcome back!</h1>
-                <p class="login-subtitle">Enter your Credentials to access your account</p>
+                <div class="brand-logo">
+                    
+                </div>
+                
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Enter your credentials to access your account</p>
 
                 {% if messages %}
                     {% for message in messages %}
@@ -133,42 +337,36 @@
                     {% endfor %}
                 {% endif %}
 
-                <form method="POST">
+                <form method="POST" id="loginForm" novalidate>
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required placeholder="Your email address">
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="8" placeholder="Your password">
                         <div class="forgot-password">
                             <a href="{% url 'forgot_password' %}">Forgot password?</a>
                         </div>
                     </div>
 
-                    <!-- <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="remember">
-                        <label class="form-check-label" for="remember">
-                            Remember for 30 days
-                        </label>
-                    </div> -->
-
-                    <button type="submit" class="btn btn-login">Login</button>
+                    <button type="submit" class="btn btn-login">Login to Account</button>
                 </form>
 
-                <div class="divider">or</div>
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
 
                 <div class="social-signin">
-                    <button class="btn-social">
+                    <a href="{% provider_login_url 'google' %}" class="btn-social">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-google" viewBox="0 0 16 16">
                             <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
                         </svg>
-                        <a href="{% provider_login_url 'google' %}">Sign in with Google</a>
-
-                    </button>
+                        Google
+                    </a>
                 </div>
 
                 <div class="signup-link">
@@ -177,14 +375,86 @@
             </div>
 
             <div class="col-md-6 p-0">
-                <div class="plant-image"></div>
+                <div class="image-side">
+                    <div class=""></div>
+                    <div class="image-container">
+                        <!-- This is a placeholder, you'll replace with your actual image -->
+                        <img src="{% static 'assets/img/jamilah_coverpage.jpeg' %}" alt="Jamilah Fashion" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <!-- <div class="brand-logo-overlay">
+                        <img src="/api/placeholder/120/40" alt="Jamilah Logo">
+                    </div>
+                    <div class="brand-message">
+                        <h2>Exquisite Heritage. Modern Grace.</h2>
+                        <p>Discover our latest collection of premium modest fashion that combines traditional elegance with contemporary style.</p>
+                        <a href="#" class="brand-btn">Explore Collection</a>
+                    </div> -->
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            let valid = true;
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            // Email validation
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value)) {
+                emailInput.classList.add('is-invalid');
+                valid = false;
+            } else {
+                emailInput.classList.remove('is-invalid');
+                emailInput.classList.add('is-valid');
+            }
+
+            // Password validation
+            if (passwordInput.value.length < 8) {
+                passwordInput.classList.add('is-invalid');
+                valid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+                passwordInput.classList.add('is-valid');
+            }
+
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+
+        // Real-time validation
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        emailInput.addEventListener('input', function() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (this.value && !emailPattern.test(this.value)) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            } else if (this.value) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            if (this.value && this.value.length < 8) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            } else if (this.value) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+    </script>
 </body>
-
-
-
 </html>

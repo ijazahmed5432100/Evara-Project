@@ -36,13 +36,13 @@
       <!--=============== BREADCRUMB ===============-->
       <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
-            <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+            <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
             <li><span class="breadcrumb__link"></span>></li>
-            <li><span class="breadcrumb__link">shop</span></li>
+            <li><a href="{% url 'all_products' %}" class="breadcrumb__link">Shop</a></li>
             <li><span class="breadcrumb__link"></span>></li>
             <li><span class="breadcrumb__link">product details</span></li>
             <li><span class="breadcrumb__link"></span>></li>
-            <li><span class="breadcrumb__link">Review</span></li>
+            <li><span class="breadcrumb__link">Edit Review</span></li>
         </ul>
       </section>
 

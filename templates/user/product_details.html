@@ -43,9 +43,9 @@
           <ul class="breadcrumb__list flex">
             <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
             <li><span class="breadcrumb__divider">›</span></li>
-            <li><a href="#" class="breadcrumb__link">Shop</a></li>
+            <li><a href="{% url 'all_products' %}" class="breadcrumb__link">Shop</a></li>
             <li><span class="breadcrumb__divider">›</span></li>
-            <li><span class="breadcrumb__current">Product</span></li>
+            <li><span class="breadcrumb__current">Product details</span></li>
           </ul>
         </div>
       </section>
@@ -97,7 +97,13 @@
                   </div>
 
                   <div class="stock-availability" id="stock-availability">
-                    <div id="stock-status">Loading stock status...</div>
+                    <div id="stock-status">
+                      {% if total_stock > 0 %}
+                      <span class="in-stock"><i class="bi bi-check-circle-fill"></i> In Stock</span>
+                      {% else %}
+                      <span class="out-of-stock"><i class="bi bi-x-circle-fill"></i> Out of Stock</span>
+                      {% endif %}
+                    </div>
                   </div>
 
                   <div class="product-price">
@@ -1377,22 +1383,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Simulate loading stock status
-  const stockStatus = document.getElementById('stock-status');
-  if (stockStatus) {
-    stockStatus.innerHTML = '<span class="loading-spinner"></span> Checking availability...';
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      // Random stock status for demo
-      const inStock = Math.random() > 0.3;
-      if (inStock) {
-        stockStatus.innerHTML = '<span class="in-stock"><i class="bi bi-check-circle-fill"></i> In Stock</span>';
-      } else {
-        stockStatus.innerHTML = '<span class="out-of-stock"><i class="bi bi-x-circle-fill"></i> Out of Stock</span>';
-      }
-    }, 1500);
-  }
+  
   
   // Initialize color and size selection
   updateSizes();
@@ -1472,30 +1463,12 @@ function updateSizes() {
     });
     
     // Update stock status based on selection
-    updateStockStatus(selectedColor, sizeSelect.value);
+    checkStock(selectedColor, availableSizes[0]);
   }
 }
 
 // Update stock status based on variant selection
-function updateStockStatus(color, size) {
-  const stockStatus = document.getElementById('stock-status');
-  if (stockStatus && color && size) {
-    stockStatus.innerHTML = '<span class="loading-spinner"></span> Checking availability...';
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Simulated logic - some variants are out of stock
-      const isOutOfStock = (color === 'White' && size === 'L') || 
-                           (color === 'Blue' && size === 'XL');
-      
-      if (isOutOfStock) {
-        stockStatus.innerHTML = '<span class="out-of-stock"><i class="bi bi-x-circle-fill"></i> Out of Stock</span>';
-      } else {
-        stockStatus.innerHTML = '<span class="in-stock"><i class="bi bi-check-circle-fill"></i> In Stock</span>';
-      }
-    }, 800);
-  }
-}
+
 
 // Add to cart functionality
 function addToCart(productId) {
@@ -1534,24 +1507,38 @@ function addToCart(productId) {
 // Add to wishlist functionality
 function addToWishlist(productId) {
   const cartMessage = document.getElementById('cart-message');
-  
   if (cartMessage) {
-    // Simulate adding to wishlist
-    cartMessage.style.display = 'block';
-    cartMessage.style.backgroundColor = '#d4edda';
-    cartMessage.style.color = '#155724';
-    cartMessage.textContent = 'Added to your wishlist';
-    
-    // Hide message after 3 seconds
-    setTimeout(() => {
-      cartMessage.style.display = 'none';
-    }, 3000);
-    
-    // Here you would typically make an API call to add the item to wishlist
-    console.log(`Added product ${productId} to wishlist`);
+    fetch(`/wishlist/add/${productId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      cartMessage.style.display = 'block';
+      if (data.success) {
+        cartMessage.style.backgroundColor = '#d4edda';
+        cartMessage.style.color = '#155724';
+        cartMessage.textContent = data.message || 'Added to your wishlist';
+      } else {
+        cartMessage.style.backgroundColor = '#f8d7da';
+        cartMessage.style.color = '#721c24';
+        cartMessage.textContent = data.message || 'Error adding to wishlist.';
+      }
+      setTimeout(() => cartMessage.style.display = 'none', 3000);
+    })
+    .catch(error => {
+      cartMessage.style.display = 'block';
+      cartMessage.style.backgroundColor = '#f8d7da';
+      cartMessage.style.color = '#721c24';
+      cartMessage.textContent = 'Error adding to wishlist.';
+      console.error('Error:', error);
+      setTimeout(() => cartMessage.style.display = 'none', 3000);
+    });
   }
 }
-
 
 
 
@@ -1663,16 +1650,16 @@ function addToWishlist(productId) {
   }
 
   function checkStock(color, size) {
-    fetch("", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({
-            "color": color,
-            "size": size
-        })
+    fetch("{% url 'product_details' product.id %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        "color": color,
+        "size": size
+      })
     })
     .then(response => response.json())
     .then(data => {
@@ -1689,9 +1676,8 @@ function addToWishlist(productId) {
         }
     })
     .catch(error => {
-        console.error("Error:", error);
-        const stockStatus = document.getElementById("stock-status");
-        stockStatus.innerHTML = "<div class='out-of-stock'><i class='bi bi-x-circle-fill'></i> Out of Stock</div>";
+      console.error("Error:", error);
+      stockStatus.innerHTML = "<div class='text-danger'>Error checking stock status</div>";
     });
 }
 
@@ -1772,24 +1758,40 @@ document.getElementById("size").addEventListener("change", function () {
           });
   }
 
+  // Add to wishlist functionality
   function addToWishlist(productId) {
+    const cartMessage = document.getElementById('cart-message');
+    if (cartMessage) {
       fetch(`/wishlist/add/${productId}/`, {
-          method: 'POST',
-          headers: {
-              'X-CSRFToken': '{{ csrf_token }}',
-              'Content-Type': 'application/json'
-          }
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json'
+        }
       })
-      .then(response => {
-          if (response.ok) {
-              location.reload();
-          } else {
-              console.error('Error:', response.statusText);
-          }
+      .then(response => response.json())
+      .then(data => {
+        cartMessage.style.display = 'block';
+        if (data.success) {
+          cartMessage.style.backgroundColor = '#d4edda';
+          cartMessage.style.color = '#155724';
+          cartMessage.textContent = data.message || 'Added to your wishlist';
+        } else {
+          cartMessage.style.backgroundColor = '#f8d7da';
+          cartMessage.style.color = '#721c24';
+          cartMessage.textContent = data.message || 'Error adding to wishlist.';
+        }
+        setTimeout(() => cartMessage.style.display = 'none', 3000);
       })
       .catch(error => {
-          console.error('Error:', error);
+        cartMessage.style.display = 'block';
+        cartMessage.style.backgroundColor = '#f8d7da';
+        cartMessage.style.color = '#721c24';
+        cartMessage.textContent = 'Error adding to wishlist.';
+        console.error('Error:', error);
+        setTimeout(() => cartMessage.style.display = 'none', 3000);
       });
+    }
   }
 
   let currentImageIndex = 0;

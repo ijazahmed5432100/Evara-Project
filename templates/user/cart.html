@@ -341,11 +341,11 @@
       <!--=============== BREADCRUMB ===============-->
       <section class="breadcrumb">
         <ul class="breadcrumb__list flex container">
-          <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+          <li><a href="{% url 'home' %}" class="breadcrumb__link">Home</a></li>
           <li><span class="breadcrumb__link"></span>></li>
-          <li><span class="breadcrumb__link">Shop</span></li>
+          <li><a href="{% url 'all_products' %}" class="breadcrumb__link">Shop</a></li>
           <li><span class="breadcrumb__link"></span>></li>
-          <li><span class="breadcrumb__link">Cart</span></li>
+          <li><a href="{% url 'cart_view' %}" class="breadcrumb__link">Cart</a></li>
         </ul>
       </section>
 
@@ -518,9 +518,15 @@
                   <td><span class="cart__total-price">₹{{ grand_total|floatformat:2 }}</span></td>
                 </tr>
             </table>
+            {% if cart_items %}
             <a href="{% url 'place_order' %}" class="btn flex btn--md">
               <i class="fi fi-rs-box-alt"></i> Proceed To Checkout    
             </a>
+            {% else %}
+            <a href="{% url 'all_products' %}" class="btn flex btn--md">
+              Explore our products    
+            </a>
+            {% endif %}
           </div>
         </div>
       </section>

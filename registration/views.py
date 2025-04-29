@@ -1,13 +1,13 @@
-from django.shortcuts import render,HttpResponse,redirect
-from django.contrib.auth.models import User
+from django.shortcuts import render,HttpResponse,redirect # type: ignore
+from django.contrib.auth.models import User # type: ignore
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime, timedelta,timezone
-from django.core.mail import send_mail
-from django.utils import timezone as django_timezone
+from django.core.mail import send_mail # type: ignore
+from django.utils import timezone as django_timezone # type: ignore
 import random
 import re
 from django.http import JsonResponse
@@ -33,9 +33,13 @@ SEND OTP TO EMAIL ACCOUNT
 def send_otp_email(email, otp):
     subject = "Your OTP Code"
     message = f"Your OTP Code is: {otp}"
+    print(f"The sending otp is:{otp}")
+
     try:
         send_mail(subject, message, "your_gmail.com", [email])
+
         return True
+    
     except Exception as e:
         print(f"Error sending email: {e}")
         return False
@@ -64,6 +68,7 @@ def validate_password(password):
 
 
 
+
 """
 USER LOGIN
 """
@@ -72,30 +77,33 @@ def LoginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
     
-
     form_data = {} 
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
         form_data['email'] = email
 
-
-
+        # Validation checks
         if not email or not password:
             messages.error(request, 'Please enter both email and password.')
             return render(request, 'login.html', {'form_data': form_data})
 
-        user=authenticate(request, username=email, password=password)
+        # Additional email format check
+        email_pattern = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        if not re.match(email_pattern, email):
+            messages.error(request, 'Please enter a valid email address.')
+            return render(request, 'login.html', {'form_data': form_data})
+
+        user = authenticate(request, username=email, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect('home') # Redirect to homepage 
+            return redirect('home')
         else:
-            messages.error(request, "Invalid email or password")
+            messages.error(request, "Invalid email or password.")
             return render(request, 'login.html', {'form_data': form_data})
 
-
-    return render(request,  'login.html' , {'form_data': form_data})
+    return render(request, 'login.html', {'form_data': form_data})
 
 
 
@@ -110,41 +118,63 @@ def SignupPage(request):
     if request.user.is_authenticated:
         return redirect('home')
     
-    
-    form_data={}
+    form_data = {}
     if request.method == 'POST':
-        username= request.POST.get('username').strip()
-        first_name=request.POST.get('first_name').strip()
-        last_name = request.POST.get('last_name').strip()
-        email = request.POST.get('email').strip()
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-        referral_code =request.POST.get('referral_code', '').strip()
-        form_data= {
-            'username':username,
+        username = request.POST.get('username', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+        referral_code = request.POST.get('referral_code', '').strip()
+        form_data = {
+            'username': username,
             'first_name': first_name,
             'last_name': last_name,
             'email': email,
             'referral_code': referral_code,
         }
 
-        errors= {}
+        errors = {}
 
-        #Check if the username or email already exists
+        # Username validation: 3-20 characters, letters/numbers/underscores only
+        username_pattern = r'^[a-zA-Z0-9_]{3,20}$'
+        if not re.match(username_pattern, username):
+            errors['username'] = "Username must be 3-20 characters long and contain only letters, numbers, or underscores."
+
+        # First/last name validation: letters only
+        name_pattern = r'^[a-zA-Z]+$'
+        if not re.match(name_pattern, first_name):
+            errors['first_name'] = "First name must contain only letters."
+        if not re.match(name_pattern, last_name):
+            errors['last_name'] = "Last name must contain only letters."
+
+        # Email validation
+        email_pattern = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        if not re.match(email_pattern, email):
+            errors['email'] = "Please enter a valid email address."
+
+        # Check if username or email already exists
         if User.objects.filter(username=username).exists():
             errors['username'] = "Username already exists. Please choose a different one."
         if User.objects.filter(email=email).exists():
-            errors['email']= "Email is already registered. Please use a different email."
-        if password != confirm_password:
-            errors['password'] = "password do not match"
+            errors['email'] = "Email is already registered. Please use a different email."
 
+        # Password validation
+        is_valid_password, password_error = validate_password(password)
+        if not is_valid_password:
+            errors['password'] = password_error
+
+        # Confirm password validation
+        if password != confirm_password:
+            errors['password'] = "Passwords do not match."
 
         if errors:
             for error in errors.values():
-                messages.error(request,error)
+                messages.error(request, error)
             return render(request, 'signup.html', {'form_data': form_data})
-        
-        #validate referral code
+
+        # Validate referral code
         referred_by = None
         if referral_code:
             try:
@@ -152,16 +182,12 @@ def SignupPage(request):
                 referred_by = referral.user
             except Referral.DoesNotExist:
                 messages.error(request, "Invalid referral code.")
-                return render(request, 'register.html', {'form_data': form_data})
-            
-
-        
+                return render(request, 'signup.html', {'form_data': form_data})
 
         otp = generate_otp()
         expires_at = django_timezone.now() + timedelta(minutes=1)
 
-
-        #store OTP and user information in session
+        # Store OTP and user information in session
         request.session['otp'] = otp
         request.session['otp_expires_at'] = int(expires_at.timestamp())
         request.session['username'] = username
@@ -169,7 +195,7 @@ def SignupPage(request):
         request.session['password'] = password
         request.session['first_name'] = first_name
         request.session['last_name'] = last_name
-        request.session['referral_code'] = referral_code   #Store referral code in session
+        request.session['referral_code'] = referral_code
 
         if not send_otp_email(email, otp):
             messages.error(request, "Failed to send OTP email. Please try again.")
@@ -177,7 +203,6 @@ def SignupPage(request):
         
         return redirect('verify_otp')
  
-        
     return render(request, 'signup.html', {'form_data': form_data})
 
 
@@ -283,7 +308,7 @@ def verify_otp(request):
             #Log in the user
             user.backend = 'django.contrib.auth.backends,ModelBackend' #Use the appropriate backend
             login(request, user)
-            return redirect('home')
+            return redirect('login')
         else:
             return render(request, 'verify_otp.html', {'error': 'Invalid OTP. Please try again.', 'email':email})
 
