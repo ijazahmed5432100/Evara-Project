@@ -340,7 +340,7 @@
                     key: data.razorpay_merchant_key,
                     amount: data.razorpay_amount,
                     currency: data.currency,
-                    name: "URBAN EDGE",
+                    name: "JAMILAH",
                     order_id: data.razorpay_order_id,
                     handler: function (response) {
                         fetch("{% url 'payments:verify_payment' order.id %}", {

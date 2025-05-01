@@ -204,7 +204,7 @@ cursor: pointer;
               {% for product in random_products %}
               <div class="product__item">
                 <div class="product__banner">
-                  <a href="#" class="product__images">
+                  <a href="{% url 'product_details' product.id %}" class="product__images">
                     {% if product.images.first %}
                     <img
                       src="{{product.images.first.image.url}}"
@@ -239,7 +239,7 @@ cursor: pointer;
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
-                  <a href="details.html">
+                  <a href="{% url 'product_details' product.id %}">
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">
@@ -273,7 +273,7 @@ cursor: pointer;
               {% for product in random_popular_products %}
               <div class="product__item">
                 <div class="product__banner">
-                  <a href="#" class="product__images">
+                  <a href="{% url 'product_details' product.id %}" class="product__images">
                     {% if product.images.first %}
                     <img
                       src="{{product.images.first.image.url}}"
@@ -308,7 +308,7 @@ cursor: pointer;
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
-                  <a href="details.html">
+                  <a href="{% url 'product_details' product.id %}">
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">
@@ -343,7 +343,7 @@ cursor: pointer;
               {% for product in random_bestseller_products %}
               <div class="product__item">
                 <div class="product__banner">
-                  <a href="#" class="product__images">
+                  <a href="{% url 'product_details' product.id %}" class="product__images">
                     {% if product.images.first %}
                     <img
                       src="{{product.images.first.image.url}}"
@@ -378,7 +378,7 @@ cursor: pointer;
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
-                  <a href="#">
+                  <a href="{% url 'product_details' product.id %}">
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">
@@ -425,7 +425,7 @@ cursor: pointer;
             {% for product in random_newarrival_products %}
               <div class="product__item">
                 <div class="product__banner">
-                  <a href="#" class="product__images">
+                  <a href="{% url 'product_details' product.id %}" class="product__images">
                     {% if product.images.first %}
                     <img
                       src="{{product.images.first.image.url}}"
@@ -460,7 +460,7 @@ cursor: pointer;
                 </div>
                 <div class="product__content">
                   <span class="product__category">{{category.category_name}}</span>
-                  <a href="#">
+                  <a href="{% url 'product_details' product.id %}">
                     <h3 class="product__title">{{product.name}}</h3>
                   </a>
                   <div class="product__rating">

@@ -102,7 +102,7 @@ def verify_payment(request, order_id):
                 item.save()
 
             # Clear cart only if this is the initial payment (not a retry)
-            if order.retry_payment_attempts == 1:
+            if order.retry_payment_attempts > 0:
                 cart = Cart.objects.get(user=order.user)
                 CartItem.objects.filter(cart=cart).delete()
                 if 'cart_details' in request.session:
