@@ -244,13 +244,13 @@ def verify_otp(request):
             username = request.session['username']
             password = request.session['password']
             first_name = request.session['first_name']
-            last_name = first_name = request.session['last_name']
+            last_name = request.session['last_name']
             referral_code = request.session.get('referral_code')  # Get referral code from session
 
 
             user = User.objects.create_user(
 
-                username=email,
+                username=email, 
                 email=email,
                 password=password,
                 first_name=first_name,

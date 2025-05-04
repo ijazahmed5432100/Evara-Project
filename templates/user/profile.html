@@ -259,7 +259,7 @@
         <div class="col-lg-3">
             <div class="sidebar">
                 <div class="bg-white rounded p-4">
-                    <nav class="nav ">
+                    <nav class="">
                         <a class="nav-link active" href="{% url 'user_profile' %}">
                             <i class="bi bi-person"></i> My Profile
                         </a>
@@ -432,6 +432,9 @@
 <!--=============== FOOTER ===============-->
         
 {% include 'footer.html' %}
+
+<!--=============== MAIN JS ===============-->
+<script src="{% static 'js/main.js' %}"></script>
 
 <script>
     // Existing password toggle script

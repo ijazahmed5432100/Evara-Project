@@ -21,14 +21,14 @@ from . import views
 urlpatterns = [
     
     # Registration
-    path('',views.SignupPage,name='signup'),
+    path('signup/',views.SignupPage,name='signup'),
     path('otp/verify/',views.verify_otp,name='verify_otp'),
     path('otp/resend/',views.resend_otp,name='resend_otp'),
 
 
 
 
-    path('login/',views.LoginPage,name='login'),
+    path('',views.LoginPage,name='login'),
     path('logout/',views.User_Logout,name='userlogout'),
     
 
