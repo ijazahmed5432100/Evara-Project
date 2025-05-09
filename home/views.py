@@ -73,6 +73,7 @@ def HomePage(request):
 """
 ABOUT PAGE
 """
+@never_cache
 def about(request):
     return render(request, 'user/about.html')
 
@@ -84,6 +85,7 @@ def about(request):
 """
 CONTACT US PAGE
 """
+@never_cache
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
